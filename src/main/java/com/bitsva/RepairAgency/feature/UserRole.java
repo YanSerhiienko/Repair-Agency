@@ -8,6 +8,4 @@ public enum UserRole {
     ROLE_MANAGER,
     ROLE_REPAIRER,
     ROLE_ADMIN;
-
-
 }

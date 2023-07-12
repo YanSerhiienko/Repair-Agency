@@ -1,9 +1,11 @@
 package com.bitsva.RepairAgency.service;
 
 import com.bitsva.RepairAgency.entity.RepairRequest;
+import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.repository.RepairRequestRepository;
+import com.bitsva.RepairAgency.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class RepairRequestService {
     private final RepairRequestRepository requestRepository;
+    private final UserRepository userRepository;
 
     public List<RepairRequest> requestList() {
         return requestRepository.findAll();
@@ -51,7 +54,14 @@ public class RepairRequestService {
         return requestRepository.findAll(pageable);
     }
 
-    public List<RepairRequest> searchByQuery(String completionStatus, String paymentStatus) {
+    public void setRepairer(long requestId, long repairerId) {
+        RepairRequest request = getById(requestId);
+        User repairer = userRepository.findById(repairerId).orElse(null);
+        request.setRepairer(repairer);
+        requestRepository.save(request);
+    }
+
+    /*public List<RepairRequest> searchByQuery(String completionStatus, String paymentStatus) {
         List<RepairRequest> allRequests = requestRepository.findAll();
         List<RepairRequest> filterByCompletionStatus = filterByCompletionStatus(completionStatus, allRequests);
         List<RepairRequest> filterByPaymentStatus = filterByPaymentStatus(paymentStatus, filterByCompletionStatus);
@@ -85,7 +95,7 @@ public class RepairRequestService {
                     requestStream.stream().filter(it -> it.getPaymentStatus().toString().equals(split[0]) || it.getPaymentStatus().toString().equals(split[1])).toList();
             default -> requestStream;
         };
-    }
+    }*/
 
     /*private List<RepairRequest> filterByAttachmentToRepairer(String attachmentToRepairer) {
 

@@ -41,7 +41,6 @@ public class RepairRequestController {
         return "request/request-list";
     }
 
-
     @PostMapping("/saveRequest")
     public String saveRequest(@ModelAttribute("request") RepairRequest request) {
         requestService.save(request);
