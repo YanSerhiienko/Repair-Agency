@@ -22,9 +22,9 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void update(User user) {
+    /*public void update(User user) {
         userRepository.flush();
-    }
+    }*/
 
     public User getById(long id) {
         return userRepository.findById(id).orElse(null);
