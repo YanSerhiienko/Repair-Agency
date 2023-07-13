@@ -20,6 +20,7 @@ public class RepairRequest {
         this.cost = 0L;
         this.completionStatus = RepairRequestCompletionStatus.NOT_STARTED;
         this.paymentStatus = RepairRequestPaymentStatus.AWAITING_PAYMENT;
+        this.repairer = null;
     }
 
     @Id
@@ -30,12 +31,17 @@ public class RepairRequest {
 
     private String description;
 
-    @ManyToMany
+    @ManyToOne
+    private User client;
+
+    private String repairer;
+
+    /*@ManyToMany
     @JoinTable (
             name = "user_request",
             joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-    private List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();*/
 
     private Long cost;
 
@@ -45,7 +51,7 @@ public class RepairRequest {
     @Enumerated(EnumType.STRING)
     private RepairRequestPaymentStatus paymentStatus;
 
-    public User getClient() {
+    /*public User getClient() {
         return users.stream().filter(it -> it.getRole().equals(UserRole.ROLE_CLIENT)).findFirst().orElse(null);
     }
 
@@ -56,5 +62,5 @@ public class RepairRequest {
     public void setRepairer(User user) {
         users.removeIf(it -> it.getRole().equals(UserRole.ROLE_REPAIRER));
         users.add(user);
-    }
+    }*/
 }

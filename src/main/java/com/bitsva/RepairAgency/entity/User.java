@@ -18,7 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NaturalId(mutable = true)
+    //@NaturalId(mutable = true)
     private String email;
 
     private String firstName;
@@ -31,12 +31,20 @@ public class User {
 
     private boolean isActive;
 
-    @ManyToMany
+    //@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "client")
+    //@OneToMany(mappedBy = "client", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "client", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<RepairRequest> requests = new ArrayList<>();
+
+    /*@ManyToMany
     @JoinTable (
             name = "user_request",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"))
-    private List<RepairRequest> requests = new ArrayList<>();
+    private List<RepairRequest> requests = new ArrayList<>();*/
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     /*@ManyToMany
     @JoinTable(
@@ -49,8 +57,6 @@ public class User {
 
     //private List<Feedback> feedbacks;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
 
     //private boolean isVerified
 

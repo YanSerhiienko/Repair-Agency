@@ -54,12 +54,15 @@ public class RepairRequestService {
         return requestRepository.findAll(pageable);
     }
 
-    public void setRepairer(long requestId, long repairerId) {
+    /*public void setRepairer(long requestId, long repairerId) {
         RepairRequest request = getById(requestId);
         User repairer = userRepository.findById(repairerId).orElse(null);
         request.setRepairer(repairer);
         requestRepository.save(request);
-    }
+    }*/
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*public List<RepairRequest> searchByQuery(String completionStatus, String paymentStatus) {
         List<RepairRequest> allRequests = requestRepository.findAll();

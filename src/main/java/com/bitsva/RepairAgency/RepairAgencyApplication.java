@@ -1,9 +1,12 @@
 package com.bitsva.RepairAgency;
 
 import com.bitsva.RepairAgency.entity.RepairRequest;
+import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
+import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.repository.RepairRequestRepository;
+import com.bitsva.RepairAgency.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +17,33 @@ public class RepairAgencyApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RepairAgencyApplication.class, args);
+	}
+
+	@Bean
+	public CommandLineRunner loadData(RepairRequestRepository requestRepository, UserRepository userRepository) {
+		return args -> {
+			User user = new User();
+			user.setId(1L);
+			user.setFirstName("Optimus");
+			user.setLastName("Prime");
+			user.setEmail("prime@mail.com");
+			user.setPhone("0999999999");
+			user.setRole(UserRole.ROLE_ADMIN);
+
+			RepairRequest repairRequest = new RepairRequest();
+			//repairRequest.setId(1L);
+			repairRequest.setCreationDate("2023-07-13");
+			repairRequest.setDescription("repair plz");
+			repairRequest.setRepairer("Unknown Stranger");
+			repairRequest.setCost(10L);
+			repairRequest.setCompletionStatus(RepairRequestCompletionStatus.NOT_STARTED);
+			repairRequest.setPaymentStatus(RepairRequestPaymentStatus.CANCELED);
+
+			//repairRequest.setClient(user);
+
+			user.getRequests().add(repairRequest);
+			userRepository.save(user);
+		};
 	}
 
 	/*@Bean
