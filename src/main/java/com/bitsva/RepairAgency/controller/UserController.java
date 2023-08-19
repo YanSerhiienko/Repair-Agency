@@ -13,10 +13,11 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("users")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/list")
     public String requestsList(Model model) {
         return findPaginated(1, model);
     }
@@ -63,5 +64,12 @@ public class UserController {
     public String deleteRequest(@RequestParam(value = "id") long id) {
         userService.deleteById(id);
         return "redirect:/users";
+    }
+
+    @GetMapping("/userInfo/{id}")
+    public String userInfo(@PathVariable(value = "id") long id, Model model) {
+        User user = userService.getById(id);
+        model.addAttribute("user", user);
+        return "user/user-info";
     }
 }

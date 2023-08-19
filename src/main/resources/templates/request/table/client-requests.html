@@ -1,0 +1,75 @@
+<div th:fragment="client-requests">
+  <table class="table table-striped table-responsive-xl">
+    <thead>
+    <tr>
+      <th>№</th>
+      <th>Description</th>
+      <th>Creation date</th>
+      <th>Repairer</th>
+      <th>Completion status</th>
+      <th>Total cost</th>
+      <th>Payment status</th>
+      <th>Edit request</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="request : ${requests}">
+      <td th:text="${request.id}"></td>
+      <td th:text="${request.description}"></td>
+      <td th:text="${request.creationDate}"></td>
+      <td>
+        <!--<th:block th:if="${request.getRepairerName} == 'Not assigned'">
+          <p1 th:text="'Not assigned'"></p1> <br>
+        </th:block>-->
+        <span th:if="${request.getRepairerName} == 'Not assigned'">Not assigned</span>
+        <a th:unless="${request.getRepairerName} == 'Not assigned'" th:href="@{/users/userInfo/{id}(id=${request.getRepairerId})}" th:text="${request.getRepairerName}" style="text-decoration: none"></a>
+      </td>
+      <td th:text="${request.completionStatus.label}"></td>
+      <td>
+        <th:block th:if="${request.cost} == 0">
+          <p1 th:text="'Not calculated'"></p1> <br>
+        </th:block>
+        <th:block th:if="${request.cost} > 0">
+          <th:block th:if="${request.paymentStatus.label} == 'Paid'">
+            <p1 th:text="${request.cost} + ' UAH'"></p1> <br>
+          </th:block>
+          <th:block th:if="${request.paymentStatus.label} == 'Awaiting payment'">
+            <p1 th:text="${request.cost} + ' UAH'"></p1> <br>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+              Pay
+            </button>
+            <form class="dropdown-menu p-4" th:action="@{/RepairAgency/payForRequest}" method="POST">
+              <input type="hidden" name="id" th:value="${request.getId()}">
+              <th:block th:if="${balance} >= ${request.cost}">
+                <p1 th:text="'Deposit ' + ${request.cost} + ' UAH for payment?'"></p1> <br>
+                <button type="submit" class="btn btn-light">Confirm</button>
+              </th:block>
+              <th:block th:if="${balance} < ${request.cost}">
+                <p1 th:text="'Insufficient funds to pay'"></p1> <br>
+                <button type="submit" class="btn btn-light">Replenish an account</button>
+              </th:block>
+            </form>
+          </th:block>
+
+        </th:block>
+      </td>
+      <td th:text="${request.paymentStatus.label}"></td>
+      <td>
+        <form action="/RepairAgency/editRequest" method="get" class="mr-1">
+          <input type="hidden" name="id" th:value="${request.getId()}">
+          <button type="submit" class="btn btn-warning">
+            <i style="width: 80px; height:50px" class="a1">Edit</i>
+          </button>
+        </form>
+        <br>
+        <form action="/RepairAgency/deleteRequest" method="post" class="mr-1">
+          <input type="hidden" name="id" th:value="${request.getId()}">
+          <button type="submit" class="btn btn-warning">
+            <i style="width: 80px; height:50px" class="a1">Delete</i>
+          </button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

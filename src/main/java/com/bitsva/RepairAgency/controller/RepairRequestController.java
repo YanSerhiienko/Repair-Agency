@@ -1,15 +1,21 @@
 package com.bitsva.RepairAgency.controller;
 
+import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.RepairRequest;
+import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
+import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.service.RepairRequestService;
+import com.bitsva.RepairAgency.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -17,16 +23,24 @@ import java.util.List;
 @RequestMapping("RepairAgency/")
 public class RepairRequestController {
     private final RepairRequestService requestService;
+    private final UserService userService;
 
     @GetMapping("/requests")
-    public String requestsList(Model model) {
-        return findPaginated(1, model);
+    public String requestsList(@AuthenticationPrincipal CustomUserDetails loggedUser, Model model) {
+        System.out.println("loggedUser = " + loggedUser);
+        System.out.println("!!!!!!!!!!!!!!!!loggedUser.getId() = " + loggedUser.getId());
+        System.out.println("!!!!!!!!!!!!!!!!loggedUser.getRole() = " + loggedUser.getRole());
+        return findPaginated(loggedUser, 1, model);
     }
 
+    //TODO fix pagination with @AuthenticationPrincipal
+
     @GetMapping("/requests/page/{pageNumber}")
-    public String findPaginated(@PathVariable ("pageNumber") int pageNumber, Model model) {
+    public String findPaginated(@AuthenticationPrincipal CustomUserDetails loggedUser,
+                                @PathVariable ("pageNumber") int pageNumber, Model model) {
+
         int pageSize = 5;
-        Page<RepairRequest> page = requestService.findPaginated(pageNumber, pageSize);
+        Page<RepairRequest> page = requestService.findPaginated(pageNumber, pageSize, loggedUser.getRole(), loggedUser.getId());
         List<RepairRequest> requestList = page.getContent();
 
         System.out.println("page.getNumber() = " + page.getNumber());
@@ -38,12 +52,22 @@ public class RepairRequestController {
         model.addAttribute("totalItems", page.getTotalElements());
 
         model.addAttribute("requests", requestList);
+        model.addAttribute("balance", loggedUser.getBalance());
+
+        List<String> repairerList = requestService.repairerList();
+        model.addAttribute("repairers", repairerList);
+
         return "request/request-list";
     }
 
     @PostMapping("/saveRequest")
-    public String saveRequest(@ModelAttribute("request") RepairRequest request) {
-        requestService.save(request);
+    public String saveRequest(Principal user, @ModelAttribute("request") RepairRequest request) {
+        requestService.save(request, user.getName());
+        /*if (request.getId() == null) {
+            requestService.save(request, user.getName());
+        } else {
+            requestService.save(request);
+        }*/
         return "redirect:/RepairAgency/requests";
     }
 
@@ -75,17 +99,40 @@ public class RepairRequestController {
         return "redirect:/RepairAgency/requests";
     }
 
-    @PostMapping("changePaymentStatus")
+    @PostMapping("/changePaymentStatus")
     public String changePaymentStatus(@RequestParam(value = "id") long id,
                                       @RequestParam(value = "paymentStatus") RepairRequestPaymentStatus paymentStatus) {
         requestService.changePaymentStatus(id, paymentStatus);
         return "redirect:/RepairAgency/requests";
     }
 
-    @PostMapping("changeCompletionStatus")
+    @PostMapping("/changeCompletionStatus")
     public String changeCompletionStatus(@RequestParam(value = "id") long id,
                                       @RequestParam(value = "completionStatus") RepairRequestCompletionStatus completionStatus) {
         requestService.changeCompletionStatus(id, completionStatus);
+        return "redirect:/RepairAgency/requests";
+    }
+
+    @PostMapping("/updateCost")
+    public String updateRequestCost(@RequestParam(value = "id") long id,
+                                    @RequestParam(value = "cost") long cost) {
+        requestService.updateCost(id, cost);
+        List<String> strings = requestService.repairerList();
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!strings = " + strings);
+        return "redirect:/RepairAgency/requests";
+    }
+
+    @PostMapping("/updateRepairer")
+    public String updateRequestRepairer(@RequestParam(value = "id") long id,
+                                    @RequestParam(value = "repairer", required = false) String repairer) {
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!repairer = " + repairer);
+        requestService.updateRepairer(id, repairer);
+        return "redirect:/RepairAgency/requests";
+    }
+
+    @PostMapping("/payForRequest")
+    public String payForRequest(@RequestParam(value = "id") long id, @AuthenticationPrincipal CustomUserDetails loggedUser) {
+        requestService.payForRequest(id, loggedUser);
         return "redirect:/RepairAgency/requests";
     }
 

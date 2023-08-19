@@ -4,63 +4,97 @@ import com.bitsva.RepairAgency.feature.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
 @Table(name = "users")
-public class User {
+public class User  { //implements UserDetails
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    //@NaturalId(mutable = true)
+    @NaturalId(mutable = true)
     private String email;
-
+    @Column
     private String firstName;
-
+    @Column
     private String lastName;
-
+    @Column
     private String phone;
-
+    @Column
     private Long balance;
 
-    private boolean isActive;
-
-    //@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "client")
-    //@OneToMany(mappedBy = "client", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @OneToMany(mappedBy = "client", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "users")
     private List<RepairRequest> requests = new ArrayList<>();
 
-    /*@ManyToMany
-    @JoinTable (
-            name = "user_request",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"))
-    private List<RepairRequest> requests = new ArrayList<>();*/
+    @Column
+    private boolean isEnabled;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    /*@ManyToMany
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();*/
+    @Column
+    private String password;
 
-    //private String password;
+    public String getFullName() {
+        return lastName + " " + firstName;
+    }
 
-    //private List<Feedback> feedbacks;
+    public User() {
+        this.balance = 0L;
+        this.isEnabled = false;
+        this.role = UserRole.ROLE_CLIENT;
+    }
 
+
+
+  /*  @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isEnabled;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }*/
+//private List<Feedback> feedbacks;
 
     //private boolean isVerified
 
-
     //private boolean isReceivingMail;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", balance=" + balance +
+                ", isEnabled=" + isEnabled +
+                ", role=" + role +
+                ", password='" + password + '\'' +
+                '}';
+    }
 
 }

@@ -19,7 +19,47 @@ public class RepairAgencyApplication {
 		SpringApplication.run(RepairAgencyApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
+	public CommandLineRunner loadData(RepairRequestRepository requestRepository, UserRepository userRepository) {
+		return args -> {
+			User optimus = new User();
+			optimus.setId(1L);
+			optimus.setFirstName("Optimus");
+			optimus.setLastName("Prime");
+			optimus.setEmail("prime@mail.com");
+			optimus.setPhone("0999999999");
+			optimus.setBalance(0L);
+			optimus.setRole(UserRole.ROLE_CLIENT);
+
+			User max = new User();
+			max.setId(2L);
+			max.setFirstName("Max");
+			max.setLastName("Pain");
+			max.setEmail("pain@mail.com");
+			max.setPhone("0991111111");
+			max.setBalance(0L);
+			max.setRole(UserRole.ROLE_REPAIRER);
+
+			RepairRequest repairRequest = new RepairRequest();
+			repairRequest.setId(1L);
+			repairRequest.setDescription("repair plz");
+			//repairRequest.setRepairer(max);
+			repairRequest.setCost(10L);
+			repairRequest.setCompletionStatus(RepairRequestCompletionStatus.NOT_STARTED);
+			repairRequest.setPaymentStatus(RepairRequestPaymentStatus.AWAITING_PAYMENT);
+
+			//repairRequest.setClient(otimus);
+
+			//optimus.getRequests().add(repairRequest);
+
+			requestRepository.save(repairRequest);
+
+			userRepository.save(optimus);
+			userRepository.save(max);
+		};
+	}*/
+
+	/*@Bean
 	public CommandLineRunner loadData(RepairRequestRepository requestRepository, UserRepository userRepository) {
 		return args -> {
 			User user = new User();
@@ -44,7 +84,7 @@ public class RepairAgencyApplication {
 			user.getRequests().add(repairRequest);
 			userRepository.save(user);
 		};
-	}
+	}*/
 
 	/*@Bean
 	public CommandLineRunner loadData(RepairRequestRepository requestRepository) {

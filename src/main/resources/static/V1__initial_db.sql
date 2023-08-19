@@ -1,5 +1,5 @@
-CREATE TABLE request (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE requests (
+    id IDENTITY PRIMARY KEY,
     creation_date DATE,
     description VARCHAR(100),
     repairer VARCHAR(100),

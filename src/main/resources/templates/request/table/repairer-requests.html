@@ -1,0 +1,41 @@
+<div th:fragment="client-requests">
+    <table class="table table-striped table-responsive-xl">
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Created by</th>
+            <th>Description</th>
+            <th>Creation date</th>
+            <th>Total cost</th>
+            <th>Completion status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="request : ${requests}">
+            <td th:text="${request.id}"></td>
+            <td >
+                <a th:href="@{/users/userInfo/{id}(id=${request.getClientId})}" th:text="${request.getClientName}" style="text-decoration: none"></a>
+            </td>
+            <td th:text="${request.description}"></td>
+            <td th:text="${request.creationDate}"></td>
+            <td th:text="${request.cost}"></td>
+            <td>
+                <p1 th:text="${request.completionStatus.label}"></p1> <br>
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    Update status
+                </button>
+                <form class="dropdown-menu p-4" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
+                    <select class="custom-select" id="inputGroupSelect01" name="completionStatus">
+                        <option name="completionStatus" th:value="NOT_STARTED">Not started</option>
+                        <option name="completionStatus" th:value="IN_PROGRESS">In progress</option>
+                        <option name="completionStatus" th:value="COMPLETED">Completed</option>
+                    </select>
+                    <input type="hidden" name="id" th:value="${request.getId()}">
+                    <button type="submit" class="btn btn-light">Update</button>
+                </form>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>

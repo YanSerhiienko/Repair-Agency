@@ -15,116 +15,19 @@
 <div class="b-example-divider"></div>
 
 <div align="center" class="container my-2">
-    <h1>Employees List</h1>
     <a th:href="@{/RepairAgency/createRequest}" class="btn btn-primary btn-sm mb-3"> Add request </a>
 
-    <table class="table table-striped table-responsive-xl">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Created by</th>
-            <th>Description</th>
-            <th>Creation date</th>
-            <th>Repairer</th>
-            <th>Completion status C</th>
-            <th>Completion status R</th>
-            <th>Total cost</th>
-            <th>Payment status C</th>
-            <th>Payment status M</th>
-            <th>Edit request</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="request : ${requests}">
-            <td th:text="${request.id}"></td>
-            <td th:text="${request.client.firstName} "></td>
-            <td th:text="${request.description}"></td>
-            <td th:text="${request.creationDate}"></td>
-            <td th:text="${request.getRepairer}"></td>
-            <td th:text="${request.completionStatus.toString()}"></td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="true" th:text="${request.completionStatus.toString()}">
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <form action="#" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
-                                    <input type="hidden" name="id" th:value="${request.getId()}">
-                                    <input type="hidden" name="completionStatus" th:value="NOT_STARTED">
-                                    <button type="submit" class="btn btn-light">Not started</button>
-                                </form>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <form action="#" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
-                                    <input type="hidden" name="id" th:value="${request.getId()}">
-                                    <input type="hidden" name="completionStatus" th:value="IN_PROGRESS">
-                                    <button type="submit" class="btn btn-light">In progress</button>
-                                </form>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <form action="#" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
-                                    <input type="hidden" name="id" th:value="${request.getId()}">
-                                    <input type="hidden" name="completionStatus" th:value="COMPLETED">
-                                    <button type="submit" class="btn btn-light">Completed</button>
-                                </form>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </td>
-            <td th:text="${request.cost}"></td>
-            <td th:text="${request.paymentStatus.toString()}"></td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="true" th:text="${request.paymentStatus.toString()}">
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <form action="#" th:action="@{/RepairAgency/changePaymentStatus}" method="POST">
-                                    <input type="hidden" name="id" th:value="${request.getId()}">
-                                    <input type="hidden" name="paymentStatus" th:value="AWAITING_PAYMENT">
-                                    <button type="submit" class="btn btn-light">Awaiting payment</button>
-                                </form>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <form action="#" th:action="@{/RepairAgency/changePaymentStatus}" method="POST">
-                                    <input type="hidden" name="id" th:value="${request.getId()}">
-                                    <input type="hidden" name="paymentStatus" th:value="PAID">
-                                    <button type="submit" class="btn btn-light">Paid</button>
-                                </form>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </td>
-            <td>
-                <form action="/RepairAgency/editRequest" method="get" class="mr-1">
-                    <input type="hidden" name="id" th:value="${request.getId()}">
-                    <button type="submit" class="btn btn-warning">
-                        <i style="width: 80px; height:50px" class="a1">Edit</i>
-                    </button>
-                </form>
-                <br>
-                <form action="/RepairAgency/deleteRequest" method="post" class="mr-1">
-                    <input type="hidden" name="id" th:value="${request.getId()}">
-                    <button type="submit" class="btn btn-warning">
-                        <i style="width: 80px; height:50px" class="a1">Delete</i>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <th:block sec:authorize="hasRole('CLIENT')">
+        <div th:insert="request/table/client-requests"></div>
+    </th:block>
+
+    <th:block sec:authorize="hasRole('REPAIRER')">
+        <div th:insert="request/table/repairer-requests"></div>
+    </th:block>
+
+    <th:block sec:authorize="hasRole('MANAGER')">
+        <div th:insert="request/table/manager-requests"></div>
+    </th:block>
 </div>
 
 <div th:insert="fragments/pagination" th:with="pageUrl='/RepairAgency/requests/page/'"></div>

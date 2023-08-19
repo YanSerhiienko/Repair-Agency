@@ -20,30 +20,26 @@ public class RepairRequest {
         this.cost = 0L;
         this.completionStatus = RepairRequestCompletionStatus.NOT_STARTED;
         this.paymentStatus = RepairRequestPaymentStatus.AWAITING_PAYMENT;
-        this.repairer = null;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToMany
+    private List<User> users = new ArrayList<>();
+
+    @Column
     private String creationDate;
 
+    @Column
     private String description;
 
-    @ManyToOne
-    private User client;
-
-    private String repairer;
-
-    /*@ManyToMany
-    @JoinTable (
-            name = "user_request",
-            joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-    private List<User> users = new ArrayList<>();*/
-
+    @Column
     private Long cost;
+
+    @Column
+    private Long depositedToPay;
 
     @Enumerated(EnumType.STRING)
     private RepairRequestCompletionStatus completionStatus;
@@ -51,16 +47,34 @@ public class RepairRequest {
     @Enumerated(EnumType.STRING)
     private RepairRequestPaymentStatus paymentStatus;
 
-    /*public User getClient() {
+    public User getClient() {
         return users.stream().filter(it -> it.getRole().equals(UserRole.ROLE_CLIENT)).findFirst().orElse(null);
+    }
+
+    public long getClientId() {
+        return getClient().getId();
+    }
+
+    public String getClientName() {
+        User client = getClient();
+        return client == null ? "User not found" : client.getFullName();
     }
 
     public User getRepairer() {
         return users.stream().filter(it -> it.getRole().equals(UserRole.ROLE_REPAIRER)).findFirst().orElse(null);
     }
 
+    public long getRepairerId() {
+        return getRepairer().getId();
+    }
+
+    public String getRepairerName() {
+        User repairer = getRepairer();
+        return repairer == null ? "Not assigned" : repairer.getFullName();
+    }
+
     public void setRepairer(User user) {
         users.removeIf(it -> it.getRole().equals(UserRole.ROLE_REPAIRER));
         users.add(user);
-    }*/
+    }
 }
