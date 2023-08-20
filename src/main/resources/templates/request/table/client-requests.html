@@ -68,6 +68,12 @@
             <i style="width: 80px; height:50px" class="a1">Delete</i>
           </button>
         </form>
+        <form action="/addFeedback" method="get" class="mr-1">
+          <input type="hidden" name="id" th:value="${request.getId()}">
+          <button type="submit" class="btn btn-warning">
+            <i style="width: 80px; height:50px" class="a1">AddFeedback</i>
+          </button>
+        </form>
       </td>
     </tr>
     </tbody>

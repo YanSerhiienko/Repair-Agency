@@ -1,12 +1,23 @@
 package com.bitsva.RepairAgency.entity;
 
+import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
+import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "feedback")
 public class Feedback {
+    public Feedback() {
+        this.feedbackDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,11 +26,14 @@ public class Feedback {
 
     private Integer rating;
 
-    private String description;
+    private String feedbackText;
 
     private Long requestId;
 
-    private String clientId;
+    /*@ManyToMany
+    private List<User> users = new ArrayList<>();*/
 
-    private String repairerId;
+    private Long clientId;
+
+    private Long repairerId;
 }

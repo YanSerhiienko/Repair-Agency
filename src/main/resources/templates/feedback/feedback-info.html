@@ -16,20 +16,11 @@
 <div class="container" >
     <a th:href="@{/RepairAgency/requests}">Back</a> <br>
 
-    <h4 th:if="${user.role.label == 'Client'}}">Information about client</h4>>
-    <th:block th:unless="${user.role.label == 'Client'}">
-        <h4>Information about repairer</h4>
-        <p1><b>Rating</b></p1><br>
-        <p1 th:text="${user.rating}"></p1><br>
-    </th:block>
-    <p1><b>Email</b></p1><br>
-    <p1 th:text="${user.email}"></p1><br>
-    <p1><b>Name</b></p1><br>
-    <p1 th:text="${user.firstName}"></p1><br>
-    <p1><b>Surname</b></p1><br>
-    <p1 th:text="${user.lastName}"></p1><br>
-    <p1><b>Phone number</b></p1><br>
-    <p1 th:text="${user.phone}"></p1><br>
+    
+
+    <p1><b>Rating</b></p1><br>
+    <p1 th:text="${feedback.rating}"></p1><br>
+    <p th:text="${feedback.feedbackText}" class="description"></p>
 </div>
 </body>
 </html>

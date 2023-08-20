@@ -8,6 +8,7 @@
             <th>Creation date</th>
             <th>Total cost</th>
             <th>Completion status</th>
+            <th>Feedback</th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +34,9 @@
                     <input type="hidden" name="id" th:value="${request.getId()}">
                     <button type="submit" class="btn btn-light">Update</button>
                 </form>
+            </td>
+            <td>
+                <a th:href="@{/{id}/feedback(id=${request.id})}"><h4 th:text="'Read feedback'" class="title"></h4></a>
             </td>
 
         </tr>

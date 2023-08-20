@@ -27,6 +27,8 @@ public class User  { //implements UserDetails
     private String phone;
     @Column
     private Long balance;
+    @Column
+    private Integer rating;
 
     @ManyToMany(mappedBy = "users")
     private List<RepairRequest> requests = new ArrayList<>();
@@ -48,6 +50,10 @@ public class User  { //implements UserDetails
         this.balance = 0L;
         this.isEnabled = false;
         this.role = UserRole.ROLE_CLIENT;
+    }
+
+    public String getRating() {
+        return rating == null ? "Repairer has no rating yet" : rating.toString();
     }
 
 
