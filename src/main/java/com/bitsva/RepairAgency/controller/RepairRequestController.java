@@ -61,8 +61,8 @@ public class RepairRequestController {
     }
 
     @PostMapping("/saveRequest")
-    public String saveRequest(Principal user, @ModelAttribute("request") RepairRequest request) {
-        requestService.save(request, user.getName());
+    public String saveRequest(@AuthenticationPrincipal CustomUserDetails loggedUser, @ModelAttribute("request") RepairRequest request) {
+        requestService.save(request, loggedUser);
         /*if (request.getId() == null) {
             requestService.save(request, user.getName());
         } else {

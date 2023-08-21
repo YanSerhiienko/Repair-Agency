@@ -28,7 +28,7 @@ public class User  { //implements UserDetails
     @Column
     private Long balance;
     @Column
-    private Integer rating;
+    private Float rating;
 
     @ManyToMany(mappedBy = "users")
     private List<RepairRequest> requests = new ArrayList<>();

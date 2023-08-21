@@ -46,7 +46,8 @@
               </th:block>
               <th:block th:if="${balance} < ${request.cost}">
                 <p1 th:text="'Insufficient funds to pay'"></p1> <br>
-                <button type="submit" class="btn btn-light">Replenish an account</button>
+                <a th:href="@{/balance}"><h4  class="title"></h4>Replenish an account</a>
+
               </th:block>
             </form>
           </th:block>
@@ -57,23 +58,31 @@
       <td>
         <form action="/RepairAgency/editRequest" method="get" class="mr-1">
           <input type="hidden" name="id" th:value="${request.getId()}">
-          <button type="submit" class="btn btn-warning">
+          <button th:if="${request.completionStatus.label == 'Not started'}" type="submit" class="btn btn-warning">
             <i style="width: 80px; height:50px" class="a1">Edit</i>
+          </button>
+          <button type="submit" th:unless="${request.completionStatus.label == 'Not started'}"
+                  class="btn btn-outline-primary" disabled>Edit
           </button>
         </form>
         <br>
         <form action="/RepairAgency/deleteRequest" method="post" class="mr-1">
           <input type="hidden" name="id" th:value="${request.getId()}">
-          <button type="submit" class="btn btn-warning">
+          <button th:if="${request.completionStatus.label == 'Not started'}" type="submit" class="btn btn-warning">
             <i style="width: 80px; height:50px" class="a1">Delete</i>
           </button>
-        </form>
-        <form action="/addFeedback" method="get" class="mr-1">
-          <input type="hidden" name="id" th:value="${request.getId()}">
-          <button type="submit" class="btn btn-warning">
-            <i style="width: 80px; height:50px" class="a1">AddFeedback</i>
+          <button type="submit" th:unless="${request.completionStatus.label == 'Not started'}"
+                  class="btn btn-outline-primary" disabled>Delete
           </button>
         </form>
+
+
+        <form th:if="${request.isHasFeedback == false}" action="/addFeedback" method="get" class="mr-1">
+          <input type="hidden" name="id" th:value="${request.getId()}">
+          <button type="submit" th:if="${request.getRepairerName == 'Not assigned' || request.completionStatus.label != 'Completed'}" class="btn btn-outline-primary" disabled>AddFeedback</button>
+          <button type="submit" th:unless="${request.getRepairerName == 'Not assigned' || request.completionStatus.label != 'Completed'}" class="btn btn-warning"><i style="width: 80px; height:50px" class="a1">AddFeedback</i></button>
+        </form>
+        <a th:unless="${request.isHasFeedback == false}" th:href="@{/{id}/feedback(id=${request.id})}"><h4 th:text="'Read feedback'" class="title"></h4></a>
       </td>
     </tr>
     </tbody>

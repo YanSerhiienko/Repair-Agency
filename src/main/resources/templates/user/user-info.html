@@ -16,7 +16,7 @@
 <div class="container" >
     <a th:href="@{/RepairAgency/requests}">Back</a> <br>
 
-    <h4 th:if="${user.role.label == 'Client'}}">Information about client</h4>>
+    <h4 th:if="${user.role.label == 'Client'}">Information about client</h4>>
     <th:block th:unless="${user.role.label == 'Client'}">
         <h4>Information about repairer</h4>
         <p1><b>Rating</b></p1><br>

@@ -10,6 +10,7 @@
             <th>Completion status</th>
             <th>Total cost</th>
             <th>Payment status</th>
+            <th>Feedback</th>
             <th>Edit request</th>
         </tr>
         </thead>
@@ -60,6 +61,10 @@
                     <input type="hidden" name="id" th:value="${request.getId()}">
                     <button type="submit" class="btn btn-light">Update</button>
                 </form>
+            </td>
+            <td>
+                <p1 th:if="${request.isHasFeedback == false}">No feedback yet</p1>
+                <a th:unless="${request.isHasFeedback == false}" th:href="@{/{id}/feedback(id=${request.id})}"><h4 th:text="'Read feedback'" class="title"></h4></a>
             </td>
             <td>
                 <form action="/RepairAgency/deleteRequest" method="post" class="mr-1">

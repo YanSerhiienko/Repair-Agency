@@ -22,6 +22,7 @@ import java.util.Optional;
 public class RepairRequestService {
     private final RepairRequestRepository requestRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     public List<RepairRequest> requestList() {
         return requestRepository.findAll();
@@ -31,9 +32,16 @@ public class RepairRequestService {
         return requestRepository.searchByUserId(id);
     }*/
 
-    public void save(RepairRequest request, String principal) {
-        User loggedUser = userRepository.findByEmail(principal);
-        request.getUsers().add(loggedUser);
+    public void save(RepairRequest request, CustomUserDetails loggedUser) {
+        User user = userRepository.findByEmail(loggedUser.getUsername());
+        request.getUsers().add(user);
+
+        if (request.getCost() > 0) {
+            userService.updateBalance(loggedUser, request.getCost());
+            request.setCost(0L);
+            request.setPaymentStatus(RepairRequestPaymentStatus.AWAITING_PAYMENT);
+        }
+
         requestRepository.save(request);
     }
 

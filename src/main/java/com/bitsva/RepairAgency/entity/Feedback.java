@@ -30,6 +30,9 @@ public class Feedback {
 
     private Long requestId;
 
+
+    //private RepairRequest request;
+
     /*@ManyToMany
     private List<User> users = new ArrayList<>();*/
 

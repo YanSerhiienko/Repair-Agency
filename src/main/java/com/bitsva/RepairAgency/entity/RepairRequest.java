@@ -47,6 +47,12 @@ public class RepairRequest {
     @Enumerated(EnumType.STRING)
     private RepairRequestPaymentStatus paymentStatus;
 
+    /*@OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    private Feedback feedback;*/
+
+    private boolean isHasFeedback;
+
     public User getClient() {
         return users.stream().filter(it -> it.getRole().equals(UserRole.ROLE_CLIENT)).findFirst().orElse(null);
     }

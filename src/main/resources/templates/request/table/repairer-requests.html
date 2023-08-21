@@ -7,6 +7,7 @@
             <th>Description</th>
             <th>Creation date</th>
             <th>Total cost</th>
+            <th>Payment status</th>
             <th>Completion status</th>
             <th>Feedback</th>
         </tr>
@@ -14,15 +15,24 @@
         <tbody>
         <tr th:each="request : ${requests}">
             <td th:text="${request.id}"></td>
-            <td >
-                <a th:href="@{/users/userInfo/{id}(id=${request.getClientId})}" th:text="${request.getClientName}" style="text-decoration: none"></a>
+            <td>
+                <a th:href="@{/users/userInfo/{id}(id=${request.getClientId})}" th:text="${request.getClientName}"
+                   style="text-decoration: none"></a>
             </td>
             <td th:text="${request.description}"></td>
             <td th:text="${request.creationDate}"></td>
             <td th:text="${request.cost}"></td>
+            <td th:text="${request.paymentStatus.label}"></td>
             <td>
-                <p1 th:text="${request.completionStatus.label}"></p1> <br>
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                <p1 th:text="${request.completionStatus.label}"></p1>
+                <br>
+
+                <button type="submit" th:if="${request.paymentStatus.label == 'Awaiting payment' || request.completionStatus.label == 'Completed'}"
+                        class="btn btn-outline-primary" disabled>Update status
+                </button>
+                <button type="button" th:unless="${request.paymentStatus.label == 'Awaiting payment' || request.completionStatus.label == 'Completed'}"
+                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-auto-close="outside">
                     Update status
                 </button>
                 <form class="dropdown-menu p-4" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
@@ -36,7 +46,9 @@
                 </form>
             </td>
             <td>
-                <a th:href="@{/{id}/feedback(id=${request.id})}"><h4 th:text="'Read feedback'" class="title"></h4></a>
+                <p1 th:if="${request.isHasFeedback == false}">No feedback yet</p1>
+                <a th:unless="${request.isHasFeedback == false}" th:href="@{/{id}/feedback(id=${request.id})}"><h4
+                        th:text="'Read feedback'" class="title"></h4></a>
             </td>
 
         </tr>

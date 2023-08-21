@@ -21,7 +21,7 @@ public interface RepairRequestRepository extends JpaRepository<RepairRequest, Lo
     @Query(nativeQuery = true, value = "SELECT * FROM request WHERE completion_status IN (:query)")
     List<RepairRequest> searchByQuery(@Param("query") String query);
 
-    @Query(nativeQuery = true, value = "SELECT id, completion_status, cost, deposited_to_pay, creation_date, description, payment_status FROM requests, requests_users " +
+    @Query(nativeQuery = true, value = "SELECT id, is_has_feedback, completion_status, cost, deposited_to_pay, creation_date, description, payment_status FROM requests, requests_users " +
             "WHERE requests.id = requests_users.requests_id AND requests_users.users_id = :query")
     Page<RepairRequest> searchByUserId(@Param("query") String query, Pageable pageable);
 }
