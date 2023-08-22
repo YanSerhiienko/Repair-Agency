@@ -85,13 +85,14 @@ public class RepairRequestController {
         return "request/request-form";
     }
 
-    //TODO combine editRequest and requestInfo after adding users
+    //TODO delete request-info template and method
+    /*//TODO combine editRequest and requestInfo after adding users
     @GetMapping("/requestInfo")
     public String requestInfo(@RequestParam(value = "id") long id, Model model) {
         RepairRequest request = requestService.getById(id);
         model.addAttribute("request", request);
         return "request/request-info";
-    }
+    }*/
 
     @PostMapping("/deleteRequest")
     public String deleteRequest(@RequestParam(value = "id") long id) {

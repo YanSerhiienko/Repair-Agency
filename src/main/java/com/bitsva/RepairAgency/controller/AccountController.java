@@ -24,14 +24,14 @@ import java.security.Principal;
 public class AccountController {
     private final UserService userService;
 
-    @GetMapping("/index")
+    /*@GetMapping("/index")
     public String home(){
         return "guide-register-login/index";
-    }
+    }*/
 
     @GetMapping("/login")
     public String login(){
-        return "guide-register-login/login";
+        return "user/account/login";
     }
 
     @GetMapping("/register")
@@ -39,7 +39,7 @@ public class AccountController {
         // create model object to store form data
         User user = new User();
         model.addAttribute("user", user);
-        return "guide-register-login/register";
+        return "/user/account/register";
     }
 
     @PostMapping("/register/save")
@@ -49,7 +49,7 @@ public class AccountController {
 
         if(result.hasErrors()){
             model.addAttribute("user", user);
-            return "guide-register-login/register";
+            return "/user/account/register";
         }
 
         /*if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
@@ -72,7 +72,7 @@ public class AccountController {
         System.out.println("user1 = " + user1);
         User user = userService.findUserByEmail(loggedUser.getName());
         model.addAttribute("user", user);
-        return "user/profile";
+        return "/user/account/profile";
     }
 
     @PostMapping("/profileUpdate")
@@ -92,16 +92,16 @@ public class AccountController {
         return "redirect:/RepairAgency/requests";
     }
 
-    @GetMapping("balance")
+    @GetMapping("/balance")
     public String viewBalance() {
-        return "user/balance-page";
+        return "user/account/balance-page";
     }
 
-    @PostMapping("updateBalance")
+    @PostMapping("/updateBalance")
     public String updateBalance(@AuthenticationPrincipal CustomUserDetails loggedUser,
                                 @RequestParam(value = "amountOfMoney") long amountOfMoney) {
         userService.updateBalance(loggedUser, amountOfMoney);
-        return "user/balance-page";
+        return "/user/account/balance-page";
     }
 
     public static void main(String[] args) {

@@ -26,9 +26,9 @@ public class MainController {
         return "main/home";
     }
 
-    @GetMapping("/aboutUs")
+    @GetMapping("/about")
     public String aboutUsPage() {
-        return "main/about-us";
+        return "main/about";
     }
 
     @GetMapping("/contacts")

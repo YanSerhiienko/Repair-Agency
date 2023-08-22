@@ -90,6 +90,14 @@ public class UserService { // implements UserDetailsService
         return userRepository.findAll(pageable);
     }
 
+    public void changeAccountStatus(long id, boolean isEnabled) {
+        User user = getById(id);
+        /*boolean aBoolean = Boolean.getBoolean(isEnabled);
+        System.out.println("aBoolean = " + aBoolean);*/
+        user.setEnabled(isEnabled);
+        userRepository.save(user);
+    }
+
     /*@Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);

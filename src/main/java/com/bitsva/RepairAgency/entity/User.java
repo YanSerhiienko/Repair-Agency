@@ -48,7 +48,7 @@ public class User  { //implements UserDetails
 
     public User() {
         this.balance = 0L;
-        this.isEnabled = false;
+        this.isEnabled = true;
         this.role = UserRole.ROLE_CLIENT;
     }
 
