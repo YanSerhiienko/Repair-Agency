@@ -4,7 +4,9 @@ import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.service.UserService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class MainController {
     private final UserService userService;
+
+    @GetMapping("/index")
+    public String index() {
+        return "main/index";
+    }
 
     @GetMapping("/home")
     public String homePage(@AuthenticationPrincipal CustomUserDetails loggedUser) {

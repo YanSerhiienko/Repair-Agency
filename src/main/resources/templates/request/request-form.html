@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Management System</title>
+    <title>Request Form</title>
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
@@ -11,9 +11,7 @@
 </head>
 <body>
 <div align="center" class="container">
-    <h1>Employee Management</h1>
-    <hr>
-    <h2>Update employee</h2>
+    <h2>Edit request</h2>
 
 
 <form action="#" th:action="@{/RepairAgency/saveRequest}" th:object="${request}" method="POST">
@@ -27,7 +25,7 @@
 
     <button type="submit" class="btn btn-info col-2">Save</button>
 </form>
-<a th:href="@{/RepairAgency/requests}">Back to Requests List</a>
+<a th:href="@{/RepairAgency/requests}">Back to list of requests</a>
 </div>
 </body>
 </html>

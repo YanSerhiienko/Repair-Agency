@@ -2,6 +2,8 @@ package com.bitsva.RepairAgency.entity;
 
 import com.bitsva.RepairAgency.feature.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,16 +19,28 @@ public class User  { //implements UserDetails
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NaturalId(mutable = true)
     private String email;
+
     @Column
+    @Size(min = 5, max = 50, message = "Size must be between 5 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Name can contain only latin symbols")
     private String firstName;
+
     @Column
+    @Size(min = 5, max = 50, message = "Size must be between 5 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name can contain only latin symbols")
     private String lastName;
+
     @Column
+    @Size(min = 10, max = 10, message = "number should be in format 0631234567")
+    @Pattern(regexp = "^[0-9]+$", message = "number should be in format 0631234567")
     private String phone;
+
     @Column
     private Long balance;
+
     @Column
     private Float rating;
 
@@ -40,6 +54,7 @@ public class User  { //implements UserDetails
     private UserRole role;
 
     @Column
+    @Size(min = 8, max = 100, message = "Size must be between 8 and 100 characters")
     private String password;
 
     public String getFullName() {

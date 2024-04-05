@@ -22,9 +22,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class Security {
-    /*@Autowired
-    private UserDetailsService userService;*/
-
     @Bean
     UserDetailsService userDetailsService() {
         return  new CustomUserDetailsService();
@@ -48,7 +45,6 @@ public class Security {
                 .authorizeHttpRequests((request) ->
                         request.requestMatchers("/register/**", "/login/**").permitAll()
                                 .requestMatchers("/home", "/about", "/contacts").permitAll()
-                                .requestMatchers("/users").hasRole("ADMIN")
                                 .requestMatchers("/profile/**", "/profileUpdate").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/balance", "/updateBalance").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/RepairAgency/requests/**").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
@@ -60,6 +56,7 @@ public class Security {
                                 .requestMatchers("/{id}/feedback").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/users/list", "/users/saveUser", "/users/createUser", "/users/editUser", "/users/deleteUser", "/users/changeAccountStatus").hasRole("ADMIN")
                                 .requestMatchers("/users/userInfo/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
+                                .requestMatchers("/css/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
 
                 )
                 .csrf(CsrfConfigurer::disable)
@@ -76,31 +73,4 @@ public class Security {
                 );
         return http.build();
     }
-
-    /*@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .httpBasic(Customizer.withDefaults())//BasicAuthenticationFilter
-                .csrf(Customizer.withDefaults())
-                .authorizeHttpRequests((requests) -> {
-                            requests
-                                    .requestMatchers("/**")
-                                    .permitAll()
-                                    .anyRequest()
-                                    .authenticated();
-                        }
-                )
-                .csrf(CsrfConfigurer::disable)
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                .logout(LogoutConfigurer::permitAll);
-
-        return http.build();
-    }*/
-
-    /*@Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userService)
-                .passwordEncoder(passwordEncoder());
-    }*/
 }
