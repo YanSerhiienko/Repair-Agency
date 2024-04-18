@@ -3,8 +3,6 @@ package com.bitsva.RepairAgency.service;
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.RepairRequest;
 import com.bitsva.RepairAgency.entity.User;
-import com.bitsva.RepairAgency.entity.user.Client;
-import com.bitsva.RepairAgency.entity.user.Repairer;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.feature.UserRole;
@@ -99,7 +97,7 @@ public class RepairRequestService {
         String[] splitName = repairerName.split(" ");
         //User repairer = userRepository.findRepairerByName(splitName[0], splitName[1]);
         User repairer = userRepository.findById(Long.valueOf(splitName[0])).orElse(null);
-
+        RepairRequest request = getById(id);
         request.setRepairer(repairer);
         save(request);
     }

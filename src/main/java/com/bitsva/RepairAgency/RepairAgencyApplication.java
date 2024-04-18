@@ -18,21 +18,6 @@ public class RepairAgencyApplication {
 		SpringApplication.run(RepairAgencyApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner loadData(UserRepository<Admin> userRepository, UserService userService) {
-		return args -> {
-			Admin admin = new Admin();
-			admin.setId(1L);
-			admin.setEmail("admin@mail.com");
-			admin.setFirstName("Optimus");
-			admin.setLastName("Prime");
-			admin.setPhone("0991234567");
-			admin.setRole(UserRole.ROLE_ADMIN);
-			admin.setPassword("11111111");
-
-			userService.save(admin);
-		};
-	}
 
 	/*@Bean
 	public CommandLineRunner loadData(RepairRequestRepository requestRepository, UserRepository userRepository) {

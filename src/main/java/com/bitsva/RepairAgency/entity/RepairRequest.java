@@ -1,7 +1,5 @@
 package com.bitsva.RepairAgency.entity;
 
-import com.bitsva.RepairAgency.entity.user.Client;
-import com.bitsva.RepairAgency.entity.user.Repairer;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.feature.UserRole;
