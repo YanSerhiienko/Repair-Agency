@@ -38,6 +38,7 @@ public class FeedbackController {
 
     @PostMapping("/saveFeedback")
     public String saveFeedback(@ModelAttribute("feedback") Feedback feedback) {
+        System.out.println(feedback.toString());
 
         feedbackService.save(feedback);
         return "redirect:/RepairAgency/requests";

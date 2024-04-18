@@ -2,9 +2,8 @@ package com.bitsva.RepairAgency.service;
 
 import com.bitsva.RepairAgency.entity.Feedback;
 import com.bitsva.RepairAgency.entity.RepairRequest;
-import com.bitsva.RepairAgency.entity.User;
+import com.bitsva.RepairAgency.entity.user.Repairer;
 import com.bitsva.RepairAgency.repository.FeedbackRepository;
-import com.bitsva.RepairAgency.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +19,11 @@ public class FeedbackService {
 
         float averageRating = feedbackRepository.averageRepairerRating(feedback.getRepairerId());
         System.out.println("feedback.toString() = " + feedback.toString());
-        User repairer = userService.getById(feedback.getRepairerId());
+        //User repairer = userService.getById(feedback.getRepairerId());
+        Repairer repairer = userService.getRepairerById(feedback.getRepairerId());
         repairer.setRating(averageRating);
         userService.save(repairer);
-
+        //TODO clean this up
         /*RepairRequest request = requestService.getById(feedback.getRequestId());
         request.setFeedback(feedback);
         requestService.save(request);*/

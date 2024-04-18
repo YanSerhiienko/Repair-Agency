@@ -3,6 +3,7 @@ package com.bitsva.RepairAgency.entity;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -24,13 +25,15 @@ public class Feedback {
 
     private String feedbackDate;
 
-    private Integer rating;
+    //TODO check for errors after replacement of Integer
+    private Long rating;
 
+    //@Size(min = 5, max = 50, message = "Size must be between 5 and 100000 characters")
     private String feedbackText;
 
     private Long requestId;
 
-
+    //TODO cleanup
     //private RepairRequest request;
 
     /*@ManyToMany
@@ -39,4 +42,17 @@ public class Feedback {
     private Long clientId;
 
     private Long repairerId;
+
+    @Override
+    public String toString() {
+        return "Feedback{" +
+                "id=" + id +
+                ", feedbackDate='" + feedbackDate + '\'' +
+                ", rating=" + rating +
+                ", feedbackText='" + feedbackText + '\'' +
+                ", requestId=" + requestId +
+                ", clientId=" + clientId +
+                ", repairerId=" + repairerId +
+                '}';
+    }
 }

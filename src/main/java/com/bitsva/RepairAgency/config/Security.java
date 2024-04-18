@@ -4,6 +4,7 @@ import com.bitsva.RepairAgency.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -43,7 +44,9 @@ public class Security {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(Customizer.withDefaults())
                 .authorizeHttpRequests((request) ->
-                        request.requestMatchers("/register/**", "/login/**").permitAll()
+                        request
+                                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
+                                .requestMatchers("/register/**", "/login/**").permitAll()
                                 .requestMatchers("/home", "/about", "/contacts").permitAll()
                                 .requestMatchers("/profile/**", "/profileUpdate").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/balance", "/updateBalance").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
@@ -54,9 +57,9 @@ public class Security {
                                 .requestMatchers("/RepairAgency/changeCompletionStatus").hasRole("REPAIRER")
                                 .requestMatchers("/addFeedback", "/saveFeedback").hasRole("CLIENT")
                                 .requestMatchers("/{id}/feedback").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
-                                .requestMatchers("/users/list", "/users/saveUser", "/users/createUser", "/users/editUser", "/users/deleteUser", "/users/changeAccountStatus").hasRole("ADMIN")
+                                .requestMatchers("/users/list", "/users/page/*", "/users/saveUser", "/users/updateUser", "/users/createUser", "/users/editUser", "/users/deleteUser", "/users/changeAccountStatus").hasRole("ADMIN")
                                 .requestMatchers("/users/userInfo/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
-                                .requestMatchers("/css/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
+                                //.requestMatchers("/css/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
 
                 )
                 .csrf(CsrfConfigurer::disable)

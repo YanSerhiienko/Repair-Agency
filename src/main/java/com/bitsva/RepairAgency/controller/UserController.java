@@ -1,14 +1,13 @@
 package com.bitsva.RepairAgency.controller;
 
-import com.bitsva.RepairAgency.entity.RepairRequest;
 import com.bitsva.RepairAgency.entity.User;
-import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,28 +42,51 @@ public class UserController {
     }
 
     @PostMapping("/saveUser")
-    public String saveRequest(@ModelAttribute("user")User user) {
+    public String saveUser(@Valid @ModelAttribute("user") User user,
+                           BindingResult result,
+                           Model model) {
+
+        if(result.hasErrors()){
+            model.addAttribute("user", user);
+            return "user/user-form";
+        }
+
         System.out.println("user.toString() = " + user.toString());
         userService.save(user);
         return "redirect:/users/list";
     }
 
+    @PostMapping("/updateUser")
+    public String updateUser(@Valid @ModelAttribute("user") User user,
+                             BindingResult result,
+                             Model model) {
+
+        if(result.hasErrors()){
+            model.addAttribute("user", user);
+            return "user/user-form";
+        }
+
+        System.out.println("user.toString() = " + user.toString());
+        userService.update(user, "");
+        return "redirect:/users/list";
+    }
+
     @GetMapping("/createUser")
-    public String createRequest(Model model) {
+    public String createUser(Model model) {
         User user = new User();
         model.addAttribute("user", user);
         return "user/user-form";
     }
 
     @GetMapping("/editUser")
-    public String editRequest(@RequestParam(value = "id") long id, Model model) {
+    public String editUser(@RequestParam(value = "id") long id, Model model) {
         User user = userService.getById(id);
         model.addAttribute("user", user);
         return "user/user-form";
     }
 
     @PostMapping("/deleteUser")
-    public String deleteRequest(@RequestParam(value = "id") long id) {
+    public String deleteUser(@RequestParam(value = "id") long id) {
         userService.deleteById(id);
         return "redirect:/users";
     }

@@ -3,6 +3,8 @@ package com.bitsva.RepairAgency.service;
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.RepairRequest;
 import com.bitsva.RepairAgency.entity.User;
+import com.bitsva.RepairAgency.entity.user.Client;
+import com.bitsva.RepairAgency.entity.user.Repairer;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.feature.UserRole;
@@ -13,9 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class RepairRequestService {
     public List<RepairRequest> requestList() {
         return requestRepository.findAll();
     }
-
+    //TODO clean this up
     /*public Page<RepairRequest> requestListByUserId(String id) {
         return requestRepository.searchByUserId(id);
     }*/
@@ -41,6 +43,8 @@ public class RepairRequestService {
             request.setCost(0L);
             request.setPaymentStatus(RepairRequestPaymentStatus.AWAITING_PAYMENT);
         }
+
+        request.setCreationDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         requestRepository.save(request);
     }
@@ -71,10 +75,17 @@ public class RepairRequestService {
 
     public Page<RepairRequest> findPaginated(int page, int size, UserRole userRole, long userId) {
         PageRequest pageable = PageRequest.of(page - 1, size);
-        if (userRole.equals(UserRole.ROLE_MANAGER)) {
+        /*if (userRole.equals(UserRole.ROLE_MANAGER)) {
             return requestRepository.findAll(pageable);
         } else {
             return requestRepository.searchByUserId(String.valueOf(userId), pageable);
+        }*/
+        if (userRole.equals(UserRole.ROLE_MANAGER)) {
+            return requestRepository.findAll(pageable);
+        } else if (userRole.equals(UserRole.ROLE_CLIENT)){
+            return requestRepository.searchByClientId(String.valueOf(userId), pageable);
+        } else {
+            return requestRepository.searchByRepairerId(String.valueOf(userId), pageable);
         }
     }
 
@@ -86,15 +97,15 @@ public class RepairRequestService {
 
     public void updateRepairer(long id, String repairerName) {
         String[] splitName = repairerName.split(" ");
-        User repairer = userRepository.findRepairerByName(splitName[0], splitName[1]);
-        RepairRequest request = getById(id);
+        //User repairer = userRepository.findRepairerByName(splitName[0], splitName[1]);
+        User repairer = userRepository.findById(Long.valueOf(splitName[0])).orElse(null);
+
         request.setRepairer(repairer);
         save(request);
     }
 
     public List<String> repairerList() {
-        List<String> repairers = userRepository.repairerNameList();
-        return repairers;
+        return userRepository.repairerNameList();
     }
 
     public void payForRequest(long requestId, CustomUserDetails loggedUser) {
@@ -104,10 +115,15 @@ public class RepairRequestService {
         Long balanceBeforePayment = client.getBalance();
         Long cost = request.getCost();
 
+        if (request.getDepositedToPay() > 0) {
+            cost -= request.getDepositedToPay();
+        }
+
         long balanceAfterPayment = balanceBeforePayment - cost;
 
         client.setBalance(balanceAfterPayment);
         request.setDepositedToPay(cost);
+
         request.setPaymentStatus(RepairRequestPaymentStatus.PAID);
 
         userRepository.save(client);

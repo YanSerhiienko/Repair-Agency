@@ -21,19 +21,17 @@
             </td>
             <td th:text="${request.description}"></td>
             <td th:text="${request.creationDate}"></td>
-            <td th:text="${request.cost}"></td>
+            <td th:text="${request.cost} + 'UAH'"></td>
             <td th:text="${request.paymentStatus.label}"></td>
             <td>
-                <p1 th:text="${request.completionStatus.label}"></p1>
-                <br>
-
-                <button type="submit" th:if="${request.paymentStatus.label == 'Awaiting payment' || request.completionStatus.label == 'Completed'}"
-                        class="btn btn-outline-primary" disabled>Update status
+                <button type="submit"
+                        th:if="${request.paymentStatus.label == 'Awaiting payment' || request.completionStatus.label == 'Completed'}"
+                        class="btn btn-outline-primary" disabled th:text="${request.completionStatus.label}">
                 </button>
-                <button type="button" th:unless="${request.paymentStatus.label == 'Awaiting payment' || request.completionStatus.label == 'Completed'}"
+                <button type="button"
+                        th:unless="${request.paymentStatus.label == 'Awaiting payment' || request.completionStatus.label == 'Completed'}"
                         class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-                        data-bs-auto-close="outside">
-                    Update status
+                        data-bs-auto-close="outside" th:text="${request.completionStatus.label}">
                 </button>
                 <form class="dropdown-menu p-4" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
                     <select class="custom-select" id="inputGroupSelect01" name="completionStatus">
@@ -42,15 +40,19 @@
                         <option name="completionStatus" th:value="COMPLETED">Completed</option>
                     </select>
                     <input type="hidden" name="id" th:value="${request.getId()}">
-                    <button type="submit" class="btn btn-light">Update</button>
+                    <button type="submit" class="btn btn-secondary">Update</button>
                 </form>
             </td>
             <td>
                 <p1 th:if="${request.isHasFeedback == false}">No feedback yet</p1>
                 <a th:unless="${request.isHasFeedback == false}" th:href="@{/{id}/feedback(id=${request.id})}"><h4
-                        th:text="'Read feedback'" class="title"></h4></a>
+                        th:text="'Read'" class="title"></h4></a>
+                <!--<form th:unless="${request.isHasFeedback == false}" th:action="@{/{id}/feedback(id=${request.id})}" class="mr-1">
+                    <input type="hidden" name="id" th:value="${request.getId()}">
+                    <button type="submit" class="btn btn-primary">Read
+                    </button>
+                </form>-->
             </td>
-
         </tr>
         </tbody>
     </table>

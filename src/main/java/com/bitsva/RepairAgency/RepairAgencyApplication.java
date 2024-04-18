@@ -1,22 +1,37 @@
 package com.bitsva.RepairAgency;
 
-import com.bitsva.RepairAgency.entity.RepairRequest;
-import com.bitsva.RepairAgency.entity.User;
-import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
-import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
+import com.bitsva.RepairAgency.entity.user.Admin;
 import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.repository.RepairRequestRepository;
 import com.bitsva.RepairAgency.repository.UserRepository;
+import com.bitsva.RepairAgency.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class RepairAgencyApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RepairAgencyApplication.class, args);
+	}
+
+	@Bean
+	public CommandLineRunner loadData(UserRepository<Admin> userRepository, UserService userService) {
+		return args -> {
+			Admin admin = new Admin();
+			admin.setId(1L);
+			admin.setEmail("admin@mail.com");
+			admin.setFirstName("Optimus");
+			admin.setLastName("Prime");
+			admin.setPhone("0991234567");
+			admin.setRole(UserRole.ROLE_ADMIN);
+			admin.setPassword("11111111");
+
+			userService.save(admin);
+		};
 	}
 
 	/*@Bean

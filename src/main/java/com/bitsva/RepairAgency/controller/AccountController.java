@@ -2,20 +2,18 @@ package com.bitsva.RepairAgency.controller;
 
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.User;
-import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -43,7 +41,7 @@ public class AccountController {
     }
 
     @PostMapping("/register/save")
-    public String registration(@Validated @ModelAttribute("user") User user,
+    public String registration(@Valid @ModelAttribute("user") User user,
                                BindingResult result,
                                Model model){
 
@@ -77,7 +75,8 @@ public class AccountController {
 
     @PostMapping("/profileUpdate")
     public String updateAccount(@AuthenticationPrincipal CustomUserDetails loggedUser,
-                                @RequestParam(name = "password", required = false) String password, User user) {
+                                @RequestParam(name = "password", required = false) String password,
+                                User user) {
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!userUPDATE = " + user);
 
@@ -89,7 +88,8 @@ public class AccountController {
         loggedUser.setLastName(user.getLastName());
 
         //redirectAttributes.addFlashAttribute("message", "Account details have benn updated");
-        return "redirect:/RepairAgency/requests";
+        //return "redirect:/RepairAgency/requests";
+        return "redirect:/profile?success";
     }
 
     @GetMapping("/balance")
@@ -101,7 +101,8 @@ public class AccountController {
     public String updateBalance(@AuthenticationPrincipal CustomUserDetails loggedUser,
                                 @RequestParam(value = "amountOfMoney") long amountOfMoney) {
         userService.updateBalance(loggedUser, amountOfMoney);
-        return "/user/account/balance-page";
+        return "redirect:/balance?success";
+        //return "/user/account/balance-page";
     }
 
     public static void main(String[] args) {

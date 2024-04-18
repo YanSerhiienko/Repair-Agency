@@ -2,20 +2,20 @@ package com.bitsva.RepairAgency.controller;
 
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.RepairRequest;
-import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.service.RepairRequestService;
 import com.bitsva.RepairAgency.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -54,6 +54,10 @@ public class RepairRequestController {
         model.addAttribute("requests", requestList);
         model.addAttribute("balance", loggedUser.getBalance());
 
+        /*if (loggedUser.getRole().equals(UserRole.ROLE_CLIENT)) {
+            model.addAttribute("balance", loggedUser.getBalance());
+        }*/
+
         List<String> repairerList = requestService.repairerList();
         model.addAttribute("repairers", repairerList);
 
@@ -61,7 +65,15 @@ public class RepairRequestController {
     }
 
     @PostMapping("/saveRequest")
-    public String saveRequest(@AuthenticationPrincipal CustomUserDetails loggedUser, @ModelAttribute("request") RepairRequest request) {
+    public String saveRequest(@AuthenticationPrincipal CustomUserDetails loggedUser,
+                              @Valid @ModelAttribute("request") RepairRequest request,
+                              BindingResult result,
+                              Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("request", request);
+            return "request/request-form";
+        }
         requestService.save(request, loggedUser);
         /*if (request.getId() == null) {
             requestService.save(request, user.getName());
