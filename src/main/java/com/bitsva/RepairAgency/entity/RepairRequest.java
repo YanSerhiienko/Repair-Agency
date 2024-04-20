@@ -28,10 +28,16 @@ public class RepairRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    private List<User> users = new ArrayList<>();
+    //@ManyToMany
+    //private List<User> users = new ArrayList<>();
 
-    private Long repairerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
+    private User client;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repairer_id")
+    private User repairer;
 
     @Column
     private String creationDate;
@@ -60,13 +66,42 @@ public class RepairRequest {
     @MapsId
     private Feedback feedback;*/
 
-    //@OneToOne(fetch = FetchType.LAZY)
-    //private Feedback feedback;
+    /*@OneToOne(fetch = FetchType.LAZY)
+    private Feedback feedback;*/
 
     private boolean isHasFeedback;
+    public User getClient() {
+        return client;
+    }
+
+    public long getClientId() {
+        return getClient().getId();
+    }
+
+    public String getClientName() {
+        User client = getClient();
+        return client == null ? "User not found" : client.getFullName();
+    }
+
+    public User getRepairer() {
+        return repairer;
+    }
+
+    public long getRepairerId() {
+        return getRepairer().getId();
+    }
+
+    public String getRepairerName() {
+        User repairer = getRepairer();
+        return repairer == null ? "Not assigned" : repairer.getFullName();
+    }
+
+    public void setRepairer(User repairer) {
+        this.repairer = repairer;
+    }
 
     //////////////////////
-    public User getClient() {
+    /*public User getClient() {
         return users.stream().filter(it -> it.getRole().equals(UserRole.ROLE_CLIENT)).findFirst().orElse(null);
     }
 
@@ -95,7 +130,5 @@ public class RepairRequest {
     public void setRepairer(User user) {
         users.removeIf(it -> it.getRole().equals(UserRole.ROLE_REPAIRER));
         users.add(user);
-    }
-
-
+    }*/
 }

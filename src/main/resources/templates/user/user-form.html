@@ -15,68 +15,81 @@
 <body>
 <header th:insert="~{fragments/header :: header}"></header>
 
+
 <div class="container bootstrap snippets bootdeys note-form">
     <div class="row">
         <div class="col-md-6 offset-md-3 content-card">
 
-            <div class="card card-form card-just-text" data-background="color">
-                <div class="form-wrap">
-                    <div>
-                        <h2 class="text-center" th:text="${user.email == null ? 'Add new user': 'Edit user info'}"></h2>
-                    </div>
-                    <div class="card-body">
-                        <form th:action="${user.email == null} ? @{/users/saveUser} : @{/users/updateUser}"
-                              th:object="${user}" method="POST">
-                            <div class="form-group mb-3">
-                                <input type="hidden" th:field="*{id}"/>
-                                <div class="form-group mb-3">
-                                    <input type="text" th:field="*{firstName}" class="form-control"
-                                           placeholder="First name"/>
-                                    <p th:errors="*{firstName}" class="text-danger"
-                                       th:if="${#fields.hasErrors('firstName')}"></p>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <input type="text" th:field="*{lastName}" class="form-control"
-                                           placeholder="Last name"/>
-                                    <p th:errors="*{lastName}" class="text-danger"
-                                       th:if="${#fields.hasErrors('lastName')}"></p>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <input type="text" th:field="*{email}" class="form-control" placeholder="Email"/>
-                                    <p th:errors="*{email}" class="text-danger"
-                                       th:if="${#fields.hasErrors('email')}"></p>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <input type="text" th:field="*{phone}" class="form-control" placeholder="Phone"/>
-                                    <p th:errors="*{phone}" class="text-danger"
-                                       th:if="${#fields.hasErrors('phone')}"></p>
-                                </div>
-                                <div class="form-group mb-3" th:if="${user.email == null}">
-                                    <input type="text" th:field="*{password}" class="form-control"
-                                           placeholder="Temporary password"/>
-                                    <p th:errors="*{password}" class="text-danger"
-                                       th:if="${#fields.hasErrors('password')}"></p>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <select class="form-select" id="inputGroupSelect01" th:field="*{role}">
-                                        <option selected th:value="ROLE_CLIENT">Client</option>
-                                        <option th:value="ROLE_MANAGER">Manager</option>
-                                        <option th:value="ROLE_REPAIRER">Repairer</option>
-                                        <option th:value="ROLE_ADMIN">Admin</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                </div>
-                                <div class="col-md-4">
-                                    <span><a th:href="@{/users/list}">Back to the list</a></span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+            <div th:if="${param.success}">
+                <div class="alert alert-info">
+                    User has been successfully saved!
                 </div>
+            </div>
+
+            <div th:if="${updateSuccess}">
+                <div class="alert alert-info">
+                    <span th:text="${updateSuccess}"></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center" th:text="${user.email == null ? 'Add new user:': 'Edit user info:'}"></h2>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="${user.email == null} ? @{/users/saveUser} : @{/users/updateUser}"
+                          th:object="${user}" method="POST">
+                        <div class="form-group mb-3">
+                            <input type="hidden" th:field="*{id}"/>
+                            <div class="form-group mb-3">
+                                <input type="text" th:field="*{firstName}" class="form-control"
+                                       placeholder="First name"/>
+                                <p th:errors="*{firstName}" class="text-danger"
+                                   th:if="${#fields.hasErrors('firstName')}"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="text" th:field="*{lastName}" class="form-control"
+                                       placeholder="Last name"/>
+                                <p th:errors="*{lastName}" class="text-danger"
+                                   th:if="${#fields.hasErrors('lastName')}"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="text" th:field="*{email}" class="form-control" placeholder="Email"/>
+                                <p th:errors="*{email}" class="text-danger"
+                                   th:if="${#fields.hasErrors('email')}"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="text" th:field="*{phone}" class="form-control" placeholder="Phone"/>
+                                <p th:errors="*{phone}" class="text-danger"
+                                   th:if="${#fields.hasErrors('phone')}"></p>
+                            </div>
+                            <div class="form-group mb-3" th:if="${user.email == null}">
+                                <input type="text" th:field="*{password}" class="form-control"
+                                       placeholder="Temporary password"/>
+                                <p th:errors="*{password}" class="text-danger"
+                                   th:if="${#fields.hasErrors('password')}"></p>
+                            </div>
+                            <div class="form-group mb-3">
+                                <select class="form-select" id="inputGroupSelect01" th:field="*{role}">
+                                    <option selected th:value="ROLE_CLIENT">Client</option>
+                                    <option th:value="ROLE_MANAGER">Manager</option>
+                                    <option th:value="ROLE_REPAIRER">Repairer</option>
+                                    <option th:value="ROLE_ADMIN">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                            <div class="col-md-4">
+                                <span><a th:href="@{/users/list}">Back to the list</a></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             </div>
 
         </div>

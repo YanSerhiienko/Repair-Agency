@@ -3,7 +3,6 @@ package com.bitsva.RepairAgency.service;
 import com.bitsva.RepairAgency.entity.Feedback;
 import com.bitsva.RepairAgency.entity.RepairRequest;
 import com.bitsva.RepairAgency.entity.User;
-import com.bitsva.RepairAgency.entity.user.Repairer;
 import com.bitsva.RepairAgency.repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

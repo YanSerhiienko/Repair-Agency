@@ -1,15 +1,7 @@
 package com.bitsva.RepairAgency;
 
-import com.bitsva.RepairAgency.entity.user.Admin;
-import com.bitsva.RepairAgency.feature.UserRole;
-import com.bitsva.RepairAgency.repository.RepairRequestRepository;
-import com.bitsva.RepairAgency.repository.UserRepository;
-import com.bitsva.RepairAgency.service.UserService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class RepairAgencyApplication {

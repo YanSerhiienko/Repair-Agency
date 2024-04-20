@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +35,8 @@ public class RepairRequestService {
 
     public void save(RepairRequest request, CustomUserDetails loggedUser) {
         User user = userRepository.findByEmail(loggedUser.getUsername());
-        request.getUsers().add(user);
+        //request.getUsers().add(user);
+        request.setClient(user);
 
         if (request.getCost() > 0) {
             userService.updateBalance(loggedUser, request.getCost());
@@ -87,9 +89,17 @@ public class RepairRequestService {
         }
     }
 
-    public void updateCost(long id, long cost) {
+    @Transactional
+    public void updateCost(long id, long costUpdate) {
         RepairRequest request = getById(id);
-        request.setCost(cost);
+        long moneyToChargeBack = 0;
+        if (request.getCost() != null && request.getCost() > costUpdate) {
+            moneyToChargeBack = request.getCost() - costUpdate;
+            userService.balanceChargeBack(request.getClientId(), moneyToChargeBack);
+        }
+        long newDepositedToPay = request.getDepositedToPay() - moneyToChargeBack;
+        request.setDepositedToPay(newDepositedToPay);
+        request.setCost(costUpdate);
         save(request);
     }
 
@@ -111,13 +121,9 @@ public class RepairRequestService {
         RepairRequest request = getById(requestId);
 
         Long balanceBeforePayment = client.getBalance();
+        Long depositedToPay = request.getDepositedToPay();
         Long cost = request.getCost();
-
-        if (request.getDepositedToPay() > 0) {
-            cost -= request.getDepositedToPay();
-        }
-
-        long balanceAfterPayment = balanceBeforePayment - cost;
+        long balanceAfterPayment = balanceBeforePayment - cost + depositedToPay;
 
         client.setBalance(balanceAfterPayment);
         request.setDepositedToPay(cost);

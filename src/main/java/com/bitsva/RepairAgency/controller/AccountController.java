@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ public class AccountController {
         // create model object to store form data
         User user = new User();
         model.addAttribute("user", user);
+        System.out.println("user.toString() = " + user.toString());
         return "/user/account/register";
     }
 
@@ -44,6 +46,15 @@ public class AccountController {
     public String registration(@Valid @ModelAttribute("user") User user,
                                BindingResult result,
                                Model model){
+
+        if (userService.checkIfEmailExists(user.getEmail())) {
+            FieldError emailError = new FieldError("user", "email", "User with such email already exists");
+            result.addError(emailError);
+        }
+        if (userService.checkIfPhoneExists(user.getPhone())) {
+            FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
+            result.addError(phoneError);
+        }
 
         if(result.hasErrors()){
             model.addAttribute("user", user);
@@ -76,7 +87,22 @@ public class AccountController {
     @PostMapping("/profileUpdate")
     public String updateAccount(@AuthenticationPrincipal CustomUserDetails loggedUser,
                                 @RequestParam(name = "password", required = false) String password,
-                                User user) {
+                                @Valid @ModelAttribute("user") User user,
+                                BindingResult result, Model model) {
+
+        if (userService.checkEmailForExistingUser(user.getEmail(), user.getId())) {
+            FieldError emailError = new FieldError("user", "email", "User with such email already exists");
+            result.addError(emailError);
+        }
+        if (userService.checkPhoneForExistingUser(user.getPhone(), user.getId())) {
+            FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
+            result.addError(phoneError);
+        }
+
+        if(result.hasErrors()){
+            model.addAttribute("user", user);
+            return "/user/account/profile";
+        }
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!userUPDATE = " + user);
 

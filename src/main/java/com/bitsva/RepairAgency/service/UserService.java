@@ -41,27 +41,45 @@ public class UserService { // implements UserDetailsService
     }
 
     public boolean update(User user, String password) {
+        User existingUser = userRepository.findById(user.getId()).orElse(null);
+        existingUser.setEmail(user.getEmail());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setPhone(user.getPhone());
+        existingUser.setRole(user.getRole());
         if (!password.equals("")) {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-        } else {
-            User existingUser = userRepository.findById(user.getId()).orElse(null);
-            System.out.println("existingUser.BEFORE UPDATE = " + existingUser);
-            existingUser.setEmail(user.getEmail());
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            existingUser.setPhone(user.getPhone());
-            existingUser.setRole(user.getRole());
-            userRepository.save(existingUser);
-            System.out.println("existingUser.AFTER UPDATE = " + existingUser);
+            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
+        userRepository.save(existingUser);
         return true;
     }
+
+    public boolean checkIfEmailExists(String email) {
+        return userRepository.checkIfEmailExists(email) > 0;
+    }
+
+    public boolean checkIfPhoneExists(String phone) {
+        return userRepository.checkIfPhoneExists(phone) > 0;
+    }
+
+    public boolean checkEmailForExistingUser(String email, Long id) {
+        return userRepository.checkEmailForExistingUser(email, id) > 0;
+    }
+
+    public boolean checkPhoneForExistingUser(String phone, Long id) {
+        return userRepository.checkPhoneForExistingUser(phone, id) > 0;
+    }
+
+    //public boolean checkIfUserActive()
 
     @Transactional
     public void updateBalance(CustomUserDetails loggedUser, long amountOfMoney) {
         userRepository.updateBalance(amountOfMoney, loggedUser.getId());
         loggedUser.setBalance(loggedUser.getBalance() + amountOfMoney);
+    }
+
+    public void balanceChargeBack(long userId, long amountOfMoney) {
+        userRepository.updateBalance(amountOfMoney, userId);
     }
 
     public User getById(long id) {

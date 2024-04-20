@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,7 @@ public class User  { //implements UserDetails
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     @NaturalId(mutable = true)
     @Email(message = "Should be in format of email")
     private String email;
@@ -37,9 +39,9 @@ public class User  { //implements UserDetails
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Name can contain only latin symbols")
     private String lastName;
 
-    @Column
-    @Size(min = 10, max = 10, message = "Number should contain 10 symbols")
-    @Pattern(regexp = "^[0-9]+$", message = "and be in format 0631234567")
+    @Column(unique = true)
+    @Size(min = 10, max = 10, message = "Should contain 10 symbols")
+    @Pattern(regexp = "^[0-9]+$", message = "Should be in format 0631234567")
     private String phone;
 
     @Column
@@ -52,8 +54,8 @@ public class User  { //implements UserDetails
     //@ManyToMany(mappedBy = "users")
     //private List<RepairRequest> requests = new ArrayList<>();
     //last
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<RepairRequest> requests = new ArrayList<>();
+    //@ManyToMany(fetch = FetchType.LAZY)
+    //private List<RepairRequest> requests = new ArrayList<>();
 
    // @Column
     private boolean isEnabled;

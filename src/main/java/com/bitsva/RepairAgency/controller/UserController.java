@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -46,6 +48,15 @@ public class UserController {
                            BindingResult result,
                            Model model) {
 
+        if (userService.checkIfEmailExists(user.getEmail())) {
+            FieldError emailError = new FieldError("user", "email", "User with such email already exists");
+            result.addError(emailError);
+        }
+        if (userService.checkIfPhoneExists(user.getPhone())) {
+            FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
+            result.addError(phoneError);
+        }
+
         if(result.hasErrors()){
             model.addAttribute("user", user);
             return "user/user-form";
@@ -53,13 +64,24 @@ public class UserController {
 
         System.out.println("user.toString() = " + user.toString());
         userService.save(user);
-        return "redirect:/users/list";
+        //return "redirect:/users/list";
+        return "redirect:/users/createUser?success";
     }
 
     @PostMapping("/updateUser")
     public String updateUser(@Valid @ModelAttribute("user") User user,
+                             RedirectAttributes redirectAttributes,
                              BindingResult result,
                              Model model) {
+
+        if (userService.checkEmailForExistingUser(user.getEmail(), user.getId())) {
+            FieldError emailError = new FieldError("user", "email", "User with such email already exists");
+            result.addError(emailError);
+        }
+        if (userService.checkPhoneForExistingUser(user.getPhone(), user.getId())) {
+            FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
+            result.addError(phoneError);
+        }
 
         if(result.hasErrors()){
             model.addAttribute("user", user);
@@ -68,7 +90,11 @@ public class UserController {
 
         System.out.println("user.toString() = " + user.toString());
         userService.update(user, "");
-        return "redirect:/users/list";
+
+        String updateSuccess = "User has been successfully updated!";
+        redirectAttributes.addFlashAttribute("updateSuccess", updateSuccess);
+        //return "redirect:/users/list";
+        return "redirect:/users/editUser?id=" + user.getId();
     }
 
     @GetMapping("/createUser")
