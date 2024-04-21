@@ -19,8 +19,6 @@ public class MainController {
 
     @GetMapping("/home")
     public String homePage(@AuthenticationPrincipal CustomUserDetails loggedUser) {
-        System.out.println("loggedUser.getFullName() = " + loggedUser.getFullName());
-        System.out.println("loggedUser = " + loggedUser);
         return "main/home";
     }
 
@@ -33,8 +31,4 @@ public class MainController {
     public String contactsPage() {
         return "main/contacts";
     }
-
-    ////////////////////////////////////////////////////////////////////
-
-
 }

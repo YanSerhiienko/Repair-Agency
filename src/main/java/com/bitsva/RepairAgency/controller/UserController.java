@@ -31,15 +31,12 @@ public class UserController {
         Page<User> page = userService.findPaginated(pageNumber, pageSize);
         List<User> userList = page.getContent();
 
-        System.out.println("page.getNumber() = " + page.getNumber());
-        System.out.println("pageNumber = " + pageNumber);
-
         model.addAttribute("page", page);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
-
         model.addAttribute("users", userList);
+
         return "user/users";
     }
 
@@ -56,15 +53,12 @@ public class UserController {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
-
         if(result.hasErrors()){
             model.addAttribute("user", user);
             return "user/user-form";
         }
 
-        System.out.println("user.toString() = " + user.toString());
         userService.save(user);
-        //return "redirect:/users/list";
         return "redirect:/users/createUser?success";
     }
 
@@ -82,18 +76,15 @@ public class UserController {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
-
         if(result.hasErrors()){
             model.addAttribute("user", user);
             return "user/user-form";
         }
 
-        System.out.println("user.toString() = " + user.toString());
         userService.update(user, "");
 
         String updateSuccess = "User has been successfully updated!";
         redirectAttributes.addFlashAttribute("updateSuccess", updateSuccess);
-        //return "redirect:/users/list";
         return "redirect:/users/editUser?id=" + user.getId();
     }
 
@@ -128,7 +119,6 @@ public class UserController {
     public String changeAccountStatus(@RequestParam(value = "id") long id,
                                       @RequestParam(value = "isEnabled", required = false) boolean isEnabled) {
         userService.changeAccountStatus(id, isEnabled);
-        System.out.println("isEnabled = " + isEnabled);
         return "redirect:/users/list";
     }
 }

@@ -12,12 +12,4 @@ public enum RepairRequestPaymentStatus {
     private RepairRequestPaymentStatus(String label) {
         this.label = label;
     }
-
-    //TODO clean this up
-    public static void main(String[] args) {
-        RepairRequest repairRequest = new RepairRequest();
-        repairRequest.setPaymentStatus(AWAITING_PAYMENT);
-
-        System.out.println("repairRequest.getPaymentStatus() = " + repairRequest.getPaymentStatus().label);
-    }
 }

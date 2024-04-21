@@ -59,8 +59,6 @@ public class Security {
                                 .requestMatchers("/{id}/feedback").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/users/list", "/users/page/*", "/users/saveUser", "/users/updateUser", "/users/createUser", "/users/editUser", "/users/deleteUser", "/users/changeAccountStatus").hasRole("ADMIN")
                                 .requestMatchers("/users/userInfo/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
-                                //.requestMatchers("/css/**").hasAnyRole("ADMIN", "CLIENT", "MANAGER", "REPAIRER")
-
                 )
                 .csrf(CsrfConfigurer::disable)
                 .formLogin(

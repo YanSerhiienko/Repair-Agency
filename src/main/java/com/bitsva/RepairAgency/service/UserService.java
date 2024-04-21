@@ -13,10 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class UserService { // implements UserDetailsService
+public class UserService {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -70,7 +69,7 @@ public class UserService { // implements UserDetailsService
         return userRepository.checkPhoneForExistingUser(phone, id) > 0;
     }
 
-    //public boolean checkIfUserActive()
+    //TODO public boolean checkIfUserActive()
 
     @Transactional
     public void updateBalance(CustomUserDetails loggedUser, long amountOfMoney) {
@@ -98,26 +97,9 @@ public class UserService { // implements UserDetailsService
 
     public void changeAccountStatus(long id, boolean isEnabled) {
         User user = getById(id);
-        /*boolean aBoolean = Boolean.getBoolean(isEnabled);
-        System.out.println("aBoolean = " + aBoolean);*/
         user.setEnabled(isEnabled);
         userRepository.save(user);
     }
-
-    /*@Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRole()));
-    }
-
-    private Collection< ? extends GrantedAuthority> mapRolesToAuthorities(UserRole role) {
-        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
-    }*/
 }
 
 
