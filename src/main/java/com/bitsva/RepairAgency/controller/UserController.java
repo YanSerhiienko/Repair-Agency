@@ -24,7 +24,7 @@ public class UserController {
         return findPaginated(1, model);
     }
 
-    @GetMapping("/users/page/{pageNumber}")
+    @GetMapping("/page/{pageNumber}")
     public String findPaginated(@PathVariable("pageNumber") int pageNumber, Model model) {
         int pageSize = 5;
         Page<User> page = userService.findPaginated(pageNumber, pageSize);
