@@ -1,48 +1,51 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account Balance</title>
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Balance</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" crossorigin="anonymous" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
-<header th:insert="fragments/header :: header"></header>
-<div class="b-example-divider"></div>
+<header th:insert="~{fragments/header :: header}"></header>
 
-<div class="container" align="center">
-  <h1>Enter the amount you want to top up your balance with</h1>
-
-  <form th:action="@{/updateBalance}" method="post">
-    <input type="number" name="amountOfMoney">
-
-    <button type="submit" class="btn btn-info col-2">Save</button>
-  </form>
-
-  <!--<input type="text" th:field="*{email}"/>
-  <form action="#" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
-    &lt;!&ndash;<input type="hidden" name="id" th:value="${request.getId()}">&ndash;&gt;
-    <input type="number" name="amountOfMoney">
-    <button type="submit" class="btn btn-light">update</button>
-  </form>-->
-
-  <!--<form th:action="@{/profileUpdate}" method="post" th:object="${user}">
-      <input type="hidden" th:field="*{id}"/>
-      <input type="hidden" th:field="*{balance}"/>
-      <input type="hidden" th:field="*{role}"/>
-      <input type="hidden" th:field="*{password}" placeholder="password"/>
-
-      <input type="text" th:field="*{email}"/>
-      <input type="text" th:field="*{firstName}"/>
-      <input type="text" th:field="*{lastName}"/>
-      <input type="text" th:field="*{phone}"/>
-      <input type="text" th:field="*{password}" placeholder="password"/>
-      <button type="submit" class="btn btn-info col-2">Save</button>
-  </form>-->
+<br /><br /><br />
+<div class="col-md-6 offset-md-3">
+    <div class="card text-center">
+        <div class="card-header">
+            <h2 class="text-center">Top up your balance:</h2>
+        </div>
+        <div th:if="${param.success}">
+            <div class="alert alert-info">
+                Your balance has been successfully replenished!
+            </div>
+        </div>
+        <div class="card-body">
+            <br/><br/>
+            <h5 class="card-subtitle text-muted">
+                Enter the amount of money you want to top up your balance with
+            </h5>
+            <br/><br/><br/>
+            <form th:action="@{/updateBalance}" role="form" method="post">
+                <div class="form-group">
+                    <input type="number" name="amountOfMoney">
+                </div>
+                <br/><br/>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <br /><br />
+        </div>
+    </div>
 </div>
+<br /><br /><br />
+
+<footer th:insert="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
 

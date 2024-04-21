@@ -2,20 +2,20 @@ package com.bitsva.RepairAgency.controller;
 
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.RepairRequest;
-import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
 import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.service.RepairRequestService;
 import com.bitsva.RepairAgency.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -27,13 +27,8 @@ public class RepairRequestController {
 
     @GetMapping("/requests")
     public String requestsList(@AuthenticationPrincipal CustomUserDetails loggedUser, Model model) {
-        System.out.println("loggedUser = " + loggedUser);
-        System.out.println("!!!!!!!!!!!!!!!!loggedUser.getId() = " + loggedUser.getId());
-        System.out.println("!!!!!!!!!!!!!!!!loggedUser.getRole() = " + loggedUser.getRole());
         return findPaginated(loggedUser, 1, model);
     }
-
-    //TODO fix pagination with @AuthenticationPrincipal
 
     @GetMapping("/requests/page/{pageNumber}")
     public String findPaginated(@AuthenticationPrincipal CustomUserDetails loggedUser,
@@ -43,14 +38,10 @@ public class RepairRequestController {
         Page<RepairRequest> page = requestService.findPaginated(pageNumber, pageSize, loggedUser.getRole(), loggedUser.getId());
         List<RepairRequest> requestList = page.getContent();
 
-        System.out.println("page.getNumber() = " + page.getNumber());
-        System.out.println("pageNumber = " + pageNumber);
-
         model.addAttribute("page", page);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
-
         model.addAttribute("requests", requestList);
         model.addAttribute("balance", loggedUser.getBalance());
 
@@ -61,13 +52,16 @@ public class RepairRequestController {
     }
 
     @PostMapping("/saveRequest")
-    public String saveRequest(@AuthenticationPrincipal CustomUserDetails loggedUser, @ModelAttribute("request") RepairRequest request) {
+    public String saveRequest(@AuthenticationPrincipal CustomUserDetails loggedUser,
+                              @Valid @ModelAttribute("request") RepairRequest request,
+                              BindingResult result,
+                              Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("request", request);
+            return "request/request-form";
+        }
         requestService.save(request, loggedUser);
-        /*if (request.getId() == null) {
-            requestService.save(request, user.getName());
-        } else {
-            requestService.save(request);
-        }*/
         return "redirect:/RepairAgency/requests";
     }
 
@@ -84,15 +78,6 @@ public class RepairRequestController {
         model.addAttribute("request", request);
         return "request/request-form";
     }
-
-    //TODO delete request-info template and method
-    /*//TODO combine editRequest and requestInfo after adding users
-    @GetMapping("/requestInfo")
-    public String requestInfo(@RequestParam(value = "id") long id, Model model) {
-        RepairRequest request = requestService.getById(id);
-        model.addAttribute("request", request);
-        return "request/request-info";
-    }*/
 
     @PostMapping("/deleteRequest")
     public String deleteRequest(@RequestParam(value = "id") long id) {
@@ -119,14 +104,12 @@ public class RepairRequestController {
                                     @RequestParam(value = "cost") long cost) {
         requestService.updateCost(id, cost);
         List<String> strings = requestService.repairerList();
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!strings = " + strings);
         return "redirect:/RepairAgency/requests";
     }
 
     @PostMapping("/updateRepairer")
     public String updateRequestRepairer(@RequestParam(value = "id") long id,
                                     @RequestParam(value = "repairer", required = false) String repairer) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!repairer = " + repairer);
         requestService.updateRepairer(id, repairer);
         return "redirect:/RepairAgency/requests";
     }
@@ -136,33 +119,5 @@ public class RepairRequestController {
         requestService.payForRequest(id, loggedUser);
         return "redirect:/RepairAgency/requests";
     }
-
-    /*@PostMapping("/saveRequest")
-    public String saveRequest(@RequestParam String description) {
-        RepairRequest request = new RepairRequest();
-        request.setDescription(description);
-        requestService.save(request);
-        return "redirect:/RepairAgency/requests";
-    }*/
-
-    /*@GetMapping("/createRequest")
-    public String createRequest() {
-        return "create-request";
-    }*/
-
-    /*@PostMapping("/editRequest")
-    public String editRequest(@RequestParam(value = "id") long id, Model model) {
-        RepairRequest request = requestService.getById(id);
-        model.addAttribute("request", request);
-        return "edit-request";
-    }*/
-
-    /*@GetMapping("/searchByQuery")
-    public String searchByQuery(@RequestParam(value = "completionStatus", required = false) String completionStatus,
-                                @RequestParam(value = "paymentStatus", required = false) String paymentStatus,
-                                Model model) {
-        model.addAttribute("requests", requestService.searchByQuery(completionStatus, paymentStatus));
-        return "request/request-list";
-    }*/
 }
 

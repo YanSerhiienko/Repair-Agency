@@ -1,7 +1,6 @@
 package com.bitsva.RepairAgency.feature;
 
 import com.bitsva.RepairAgency.entity.RepairRequest;
-import com.bitsva.RepairAgency.entity.User;
 
 public enum RepairRequestPaymentStatus {
     PAID("Paid"),
@@ -12,12 +11,5 @@ public enum RepairRequestPaymentStatus {
 
     private RepairRequestPaymentStatus(String label) {
         this.label = label;
-    }
-
-    public static void main(String[] args) {
-        RepairRequest repairRequest = new RepairRequest();
-        repairRequest.setPaymentStatus(AWAITING_PAYMENT);
-
-        System.out.println("repairRequest.getPaymentStatus() = " + repairRequest.getPaymentStatus().label);
     }
 }

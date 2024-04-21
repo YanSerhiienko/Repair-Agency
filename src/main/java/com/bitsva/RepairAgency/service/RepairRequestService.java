@@ -12,10 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +29,18 @@ public class RepairRequestService {
         return requestRepository.findAll();
     }
 
-    /*public Page<RepairRequest> requestListByUserId(String id) {
-        return requestRepository.searchByUserId(id);
-    }*/
-
+    @Transactional
     public void save(RepairRequest request, CustomUserDetails loggedUser) {
         User user = userRepository.findByEmail(loggedUser.getUsername());
-        request.getUsers().add(user);
+        request.setClient(user);
 
         if (request.getCost() > 0) {
             userService.updateBalance(loggedUser, request.getCost());
             request.setCost(0L);
             request.setPaymentStatus(RepairRequestPaymentStatus.AWAITING_PAYMENT);
         }
+
+        request.setCreationDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         requestRepository.save(request);
     }
@@ -73,41 +73,52 @@ public class RepairRequestService {
         PageRequest pageable = PageRequest.of(page - 1, size);
         if (userRole.equals(UserRole.ROLE_MANAGER)) {
             return requestRepository.findAll(pageable);
+        } else if (userRole.equals(UserRole.ROLE_CLIENT)){
+            return requestRepository.searchByClientId(String.valueOf(userId), pageable);
         } else {
-            return requestRepository.searchByUserId(String.valueOf(userId), pageable);
+            return requestRepository.searchByRepairerId(String.valueOf(userId), pageable);
         }
     }
 
-    public void updateCost(long id, long cost) {
+    @Transactional
+    public void updateCost(long id, long costUpdate) {
         RepairRequest request = getById(id);
-        request.setCost(cost);
+        long moneyToChargeBack = 0;
+        if (request.getCost() != null && request.getCost() > costUpdate) {
+            moneyToChargeBack = request.getCost() - costUpdate;
+            userService.balanceChargeBack(request.getClientId(), moneyToChargeBack);
+        }
+        long newDepositedToPay = request.getDepositedToPay() - moneyToChargeBack;
+        request.setDepositedToPay(newDepositedToPay);
+        request.setCost(costUpdate);
         save(request);
     }
 
     public void updateRepairer(long id, String repairerName) {
         String[] splitName = repairerName.split(" ");
-        User repairer = userRepository.findRepairerByName(splitName[0], splitName[1]);
+        User repairer = userRepository.findById(Long.valueOf(splitName[0])).orElse(null);
         RepairRequest request = getById(id);
         request.setRepairer(repairer);
         save(request);
     }
 
     public List<String> repairerList() {
-        List<String> repairers = userRepository.repairerNameList();
-        return repairers;
+        return userRepository.repairerNameList();
     }
 
+    @Transactional
     public void payForRequest(long requestId, CustomUserDetails loggedUser) {
         User client = userRepository.findByEmail(loggedUser.getUsername());
         RepairRequest request = getById(requestId);
 
         Long balanceBeforePayment = client.getBalance();
+        Long depositedToPay = request.getDepositedToPay();
         Long cost = request.getCost();
-
-        long balanceAfterPayment = balanceBeforePayment - cost;
+        long balanceAfterPayment = balanceBeforePayment - cost + depositedToPay;
 
         client.setBalance(balanceAfterPayment);
         request.setDepositedToPay(cost);
+
         request.setPaymentStatus(RepairRequestPaymentStatus.PAID);
 
         userRepository.save(client);
@@ -115,66 +126,4 @@ public class RepairRequestService {
 
         loggedUser.setBalance(balanceAfterPayment);
     }
-
-    /*public void setRepairer(long requestId, long repairerId) {
-        RepairRequest request = getById(requestId);
-        User repairer = userRepository.findById(repairerId).orElse(null);
-        request.setRepairer(repairer);
-        requestRepository.save(request);
-    }*/
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*public List<RepairRequest> searchByQuery(String completionStatus, String paymentStatus) {
-        List<RepairRequest> allRequests = requestRepository.findAll();
-        List<RepairRequest> filterByCompletionStatus = filterByCompletionStatus(completionStatus, allRequests);
-        List<RepairRequest> filterByPaymentStatus = filterByPaymentStatus(paymentStatus, filterByCompletionStatus);
-        System.out.println("repairRequests1 = " + filterByPaymentStatus);
-        return filterByPaymentStatus;
-    }
-
-    private List<RepairRequest>  filterByCompletionStatus(String completionStatus, List<RepairRequest> requestStream) {
-        if (completionStatus == null) {
-            return requestStream;
-        }
-        String[] split = completionStatus.split(",");
-        return switch (split.length) {
-            case 1 ->
-                    requestStream.stream().filter(it -> it.getCompletionStatus().toString().equals(completionStatus)).toList();
-            case 2 ->
-                    requestStream.stream().filter(it -> it.getCompletionStatus().toString().equals(split[0]) || it.getCompletionStatus().toString().equals(split[1])).toList();
-            default -> requestStream;
-        };
-    }
-
-    private List<RepairRequest> filterByPaymentStatus(String paymentStatus, List<RepairRequest> requestStream) {
-        if (paymentStatus == null) {
-            return requestStream;
-        }
-        String[] split = paymentStatus.split(",");
-        return switch (split.length) {
-            case 1 ->
-                    requestStream.stream().filter(it -> it.getPaymentStatus().toString().equals(paymentStatus)).toList();
-            case 2 ->
-                    requestStream.stream().filter(it -> it.getPaymentStatus().toString().equals(split[0]) || it.getPaymentStatus().toString().equals(split[1])).toList();
-            default -> requestStream;
-        };
-    }*/
-
-    /*private List<RepairRequest> filterByAttachmentToRepairer(String attachmentToRepairer) {
-
-    }
-
-    private List<RepairRequest> filterByAttachmentToManager(String attachmentToManager) {
-
-    }*/
-
-    /*private List<RepairRequest> filterByCost(String cost) {
-
-    }
-
-    private List<RepairRequest> filterByCreationDate(String creationDate) {
-
-    }*/
 }
