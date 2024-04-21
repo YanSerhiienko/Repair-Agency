@@ -2,32 +2,18 @@ package com.bitsva.RepairAgency.service;
 
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.entity.User;
-import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class UserService { // implements UserDetailsService
+public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -48,28 +34,42 @@ public class UserService { // implements UserDetailsService
             return false;
         }
 
-        //user.setRole(UserRole.CLIENT);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
     }
 
     public boolean update(User user, String password) {
+        User existingUser = userRepository.findById(user.getId()).orElse(null);
+        existingUser.setEmail(user.getEmail());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setPhone(user.getPhone());
+        existingUser.setRole(user.getRole());
         if (!password.equals("")) {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-        } else {
-            User existingUser = userRepository.findById(user.getId()).orElse(null);
-            System.out.println("existingUser.BEFORE UPDATE = " + existingUser);
-            existingUser.setEmail(user.getEmail());
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            existingUser.setPhone(user.getPhone());
-            userRepository.save(existingUser);
-            System.out.println("existingUser.AFTER UPDATE = " + existingUser);
+            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
+        userRepository.save(existingUser);
         return true;
     }
+
+    public boolean checkIfEmailExists(String email) {
+        return userRepository.checkIfEmailExists(email) > 0;
+    }
+
+    public boolean checkIfPhoneExists(String phone) {
+        return userRepository.checkIfPhoneExists(phone) > 0;
+    }
+
+    public boolean checkEmailForExistingUser(String email, Long id) {
+        return userRepository.checkEmailForExistingUser(email, id) > 0;
+    }
+
+    public boolean checkPhoneForExistingUser(String phone, Long id) {
+        return userRepository.checkPhoneForExistingUser(phone, id) > 0;
+    }
+
+    //TODO public boolean checkIfUserActive()
 
     @Transactional
     public void updateBalance(CustomUserDetails loggedUser, long amountOfMoney) {
@@ -77,9 +77,14 @@ public class UserService { // implements UserDetailsService
         loggedUser.setBalance(loggedUser.getBalance() + amountOfMoney);
     }
 
+    public void balanceChargeBack(long userId, long amountOfMoney) {
+        userRepository.updateBalance(amountOfMoney, userId);
+    }
+
     public User getById(long id) {
         return userRepository.findById(id).orElse(null);
     }
+
 
     public void deleteById(long id) {
         userRepository.deleteById(id);
@@ -92,26 +97,9 @@ public class UserService { // implements UserDetailsService
 
     public void changeAccountStatus(long id, boolean isEnabled) {
         User user = getById(id);
-        /*boolean aBoolean = Boolean.getBoolean(isEnabled);
-        System.out.println("aBoolean = " + aBoolean);*/
         user.setEnabled(isEnabled);
         userRepository.save(user);
     }
-
-    /*@Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRole()));
-    }
-
-    private Collection< ? extends GrantedAuthority> mapRolesToAuthorities(UserRole role) {
-        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
-    }*/
 }
 
 

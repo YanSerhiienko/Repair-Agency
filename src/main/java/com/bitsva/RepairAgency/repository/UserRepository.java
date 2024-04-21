@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
 
     @Query(nativeQuery = true, value =
-            "SELECT CONCAT(last_name, \" \", first_name) AS full_name FROM users WHERE role = 'ROLE_REPAIRER'")
+            "SELECT CONCAT(id, \" \", last_name, \" \", first_name) AS full_name FROM users WHERE role = 'ROLE_REPAIRER'")
     List<String> repairerNameList();
 
     @Query(nativeQuery = true, value =
@@ -26,4 +26,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(nativeQuery = true, value =
             "UPDATE users SET balance = balance + :amountOfMoney where id = :id")
     void updateBalance(@Param("amountOfMoney") long amountOfMoney, @Param("id") long id);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE email = :email")
+    int checkIfEmailExists(@Param("email") String email);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE email = :email AND id != :id")
+    int checkEmailForExistingUser(@Param("email") String email, @Param("id") Long id);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE phone = :phone")
+    int checkIfPhoneExists(@Param("phone") String phone);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE phone = :phone AND id != :id")
+    int checkPhoneForExistingUser(@Param("phone") String phone, @Param("id") Long id);
 }

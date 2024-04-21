@@ -2,58 +2,55 @@ package com.bitsva.RepairAgency.entity;
 
 import com.bitsva.RepairAgency.feature.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.*;
 
 @Data
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "users")
-public class User  { //implements UserDetails
+
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     @NaturalId(mutable = true)
+    @Email(message = "Should be in format of email")
     private String email;
 
-    @Column
-    @Size(min = 5, max = 50, message = "Size must be between 5 and 50 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Name can contain only latin symbols")
+
+    @Size(min = 2, max = 50, message = "Size must be between 5 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name can contain only latin symbols")
     private String firstName;
 
-    @Column
-    @Size(min = 5, max = 50, message = "Size must be between 5 and 50 characters")
+    @Size(min = 2, max = 50, message = "Size must be between 5 and 50 characters")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Name can contain only latin symbols")
     private String lastName;
 
-    @Column
-    @Size(min = 10, max = 10, message = "number should be in format 0631234567")
-    @Pattern(regexp = "^[0-9]+$", message = "number should be in format 0631234567")
+    @Column(unique = true)
+    @Size(min = 10, max = 10, message = "Should contain 10 symbols")
+    @Pattern(regexp = "^[0-9]+$", message = "Should be in format 0631234567")
     private String phone;
 
-    @Column
     private Long balance;
 
-    @Column
     private Float rating;
 
-    @ManyToMany(mappedBy = "users")
-    private List<RepairRequest> requests = new ArrayList<>();
-
-    @Column
     private boolean isEnabled;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column
     @Size(min = 8, max = 100, message = "Size must be between 8 and 100 characters")
     private String password;
 
@@ -71,38 +68,6 @@ public class User  { //implements UserDetails
         return rating == null ? "Repairer has no rating yet" : rating.toString();
     }
 
-
-
-  /*  @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return isEnabled;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }*/
-//private List<Feedback> feedbacks;
-
-    //private boolean isVerified
-
-    //private boolean isReceivingMail;
-
     @Override
     public String toString() {
         return "User{" +
@@ -111,11 +76,9 @@ public class User  { //implements UserDetails
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
-                ", balance=" + balance +
                 ", isEnabled=" + isEnabled +
                 ", role=" + role +
                 ", password='" + password + '\'' +
                 '}';
     }
-
 }
