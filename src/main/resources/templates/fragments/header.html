@@ -55,7 +55,7 @@
       </button>
       <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item" sec:authorize="hasRole('CLIENT')"><a th:href="@{/balance}" class="nav-link">Balance: <span sec:authentication="principal.balance"></span><span> UAH</span></a></li>
+          <li class="nav-item" sec:authorize="hasRole('CLIENT')"><a th:href="@{/balance}" class="nav-link"><font color="#ffd700">Balance:</font> <span sec:authentication="principal.balance"></span><span> UAH</span></a></li>
           <li class="nav-item">
             <a class="nav-link" href="/home">Home</span></a>
           </li>
@@ -84,7 +84,7 @@
       <div class="collapse navbar-collapse justify-content-end" sec:authorize="isAuthenticated()">
         <ul class="navbar-nav">
 
-          <li class="nav-item"><a href="/profile" class="nav-link">Hello, <span sec:authentication="principal.fullName"> </span></a></li>
+          <li class="nav-item"><a href="/profile" class="nav-link">Hello, <font color="#00bfff"><span sec:authentication="principal.fullName"> </span></font></a></li>
           <li class="nav-item"><a th:href="@{/logout}" class="nav-link">Logout</a></li>
         </ul>
       </div>

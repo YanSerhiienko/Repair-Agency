@@ -27,6 +27,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "UPDATE users SET balance = balance + :amountOfMoney where id = :id")
     void updateBalance(@Param("amountOfMoney") long amountOfMoney, @Param("id") long id);
 
+    @Modifying
+    @Query(nativeQuery = true, value =
+            "UPDATE users SET rating = :rating where id = :id")
+    void updateRating(@Param("rating") float rating, @Param("id") long id);
+
     @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE email = :email")
     int checkIfEmailExists(@Param("email") String email);
 
@@ -38,4 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE phone = :phone AND id != :id")
     int checkPhoneForExistingUser(@Param("phone") String phone, @Param("id") Long id);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(1) FROM users WHERE role = 'ROLE_SUPER_ADMIN' AND id = :id")
+    int checkUseRole(@Param("id") Long id);
 }

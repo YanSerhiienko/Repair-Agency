@@ -48,7 +48,7 @@
                 </button>
                 <form class="dropdown-menu p-4" th:action="@{/RepairAgency/updateCost}" method="POST">
                     <input type="hidden" name="id" th:value="${request.getId()}">
-                    <input type="number" name="cost" th:value="${request.getCost()}">
+                    <input type="number" min="0" name="cost" th:value="${request.getCost()}">
                     <button type="submit" class="btn btn-secondary">Update</button>
                 </form>
             </td>

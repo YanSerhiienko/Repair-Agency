@@ -1,5 +1,9 @@
 package com.bitsva.RepairAgency.controller;
 
+import com.bitsva.RepairAgency.dto.UserCreationDTO;
+import com.bitsva.RepairAgency.dto.UserMapper;
+import com.bitsva.RepairAgency.dto.UserResponseDTO;
+import com.bitsva.RepairAgency.dto.UserUpdateDTO;
 import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.service.UserService;
 import jakarta.validation.Valid;
@@ -12,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -19,6 +24,7 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("/list")
     public String requestsList(Model model) {
@@ -30,95 +36,90 @@ public class UserController {
         int pageSize = 5;
         Page<User> page = userService.findPaginated(pageNumber, pageSize);
         List<User> userList = page.getContent();
+        List<UserResponseDTO> dtoList = userMapper.mapUserToUserResponseDTO(userList);
 
         model.addAttribute("page", page);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
-        model.addAttribute("users", userList);
+        model.addAttribute("users", dtoList);
 
         return "user/users";
     }
 
     @PostMapping("/saveUser")
-    public String saveUser(@Valid @ModelAttribute("user") User user,
-                           BindingResult result,
-                           Model model) {
+    public String saveUser(@Valid @ModelAttribute("user") UserCreationDTO dto,
+                           BindingResult result, Model model) {
 
-        if (userService.checkIfEmailExists(user.getEmail())) {
+        if (userService.checkIfEmailExists(dto.getEmail())) {
             FieldError emailError = new FieldError("user", "email", "User with such email already exists");
             result.addError(emailError);
         }
-        if (userService.checkIfPhoneExists(user.getPhone())) {
+        if (userService.checkIfPhoneExists(dto.getPhone())) {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
         if(result.hasErrors()){
-            model.addAttribute("user", user);
+            model.addAttribute("user", dto);
             return "user/user-form";
         }
 
-        userService.save(user);
+        userService.save(dto);
         return "redirect:/users/createUser?success";
     }
 
     @PostMapping("/updateUser")
-    public String updateUser(@Valid @ModelAttribute("user") User user,
+    public String updateUser(@Valid @ModelAttribute("user") UserUpdateDTO dto,
                              RedirectAttributes redirectAttributes,
-                             BindingResult result,
-                             Model model) {
+                             BindingResult result, Model model) {
 
-        if (userService.checkEmailForExistingUser(user.getEmail(), user.getId())) {
+        if (userService.checkEmailForExistingUser(dto.getEmail(), dto.getId())) {
             FieldError emailError = new FieldError("user", "email", "User with such email already exists");
             result.addError(emailError);
         }
-        if (userService.checkPhoneForExistingUser(user.getPhone(), user.getId())) {
+        if (userService.checkPhoneForExistingUser(dto.getPhone(), dto.getId())) {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
         if(result.hasErrors()){
-            model.addAttribute("user", user);
+            model.addAttribute("user", dto);
             return "user/user-form";
         }
 
-        userService.update(user, "");
+        userService.update(dto);
 
         String updateSuccess = "User has been successfully updated!";
         redirectAttributes.addFlashAttribute("updateSuccess", updateSuccess);
-        return "redirect:/users/editUser?id=" + user.getId();
+        return "redirect:/users/editUser?id=" + dto.getId();
     }
 
     @GetMapping("/createUser")
     public String createUser(Model model) {
-        User user = new User();
-        model.addAttribute("user", user);
+        UserCreationDTO creationDTO = new UserCreationDTO();
+        User user = userMapper.mapUserCreationDTOToUser(creationDTO);
+        UserUpdateDTO updateDTO = userMapper.mapUserToUserUpdateDTO(user);
+        model.addAttribute("user", updateDTO);
         return "user/user-form";
     }
 
     @GetMapping("/editUser")
     public String editUser(@RequestParam(value = "id") long id, Model model) {
-        User user = userService.getById(id);
-        model.addAttribute("user", user);
+        UserResponseDTO dto = userService.getUserDTO(id);
+        model.addAttribute("user", dto);
         return "user/user-form";
     }
 
     @PostMapping("/deleteUser")
-    public String deleteUser(@RequestParam(value = "id") long id) {
-        userService.deleteById(id);
-        return "redirect:/users";
+    public String deleteUser(@RequestParam(value = "id") long id,
+                             Principal loggedUser) {
+        userService.deleteById(id, loggedUser.getName());
+        return "redirect:/users/list";
     }
 
     @GetMapping("/userInfo/{id}")
     public String userInfo(@PathVariable(value = "id") long id, Model model) {
-        User user = userService.getById(id);
-        model.addAttribute("user", user);
+        UserResponseDTO dto = userService.getUserDTO(id);
+        model.addAttribute("user", dto);
         return "user/user-info";
-    }
-
-    @PostMapping("/changeAccountStatus")
-    public String changeAccountStatus(@RequestParam(value = "id") long id,
-                                      @RequestParam(value = "isEnabled", required = false) boolean isEnabled) {
-        userService.changeAccountStatus(id, isEnabled);
-        return "redirect:/users/list";
     }
 }

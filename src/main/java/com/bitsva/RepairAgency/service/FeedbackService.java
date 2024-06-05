@@ -20,9 +20,7 @@ public class FeedbackService {
         feedbackRepository.save(feedback);
         float averageRating = feedbackRepository.averageRepairerRating(feedback.getRepairerId());
 
-        User repairer = userService.getById(feedback.getRepairerId());
-        repairer.setRating(averageRating);
-        userService.save(repairer);
+        userService.updateRating(averageRating, feedback.getRepairerId());
 
         RepairRequest request = requestService.getById(feedback.getRequestId());
         request.setHasFeedback(true);

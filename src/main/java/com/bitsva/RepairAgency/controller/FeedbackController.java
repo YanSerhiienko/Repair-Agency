@@ -4,9 +4,11 @@ import com.bitsva.RepairAgency.entity.Feedback;
 import com.bitsva.RepairAgency.entity.RepairRequest;
 import com.bitsva.RepairAgency.service.FeedbackService;
 import com.bitsva.RepairAgency.service.RepairRequestService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -27,7 +29,12 @@ public class FeedbackController {
     }
 
     @PostMapping("/saveFeedback")
-    public String saveFeedback(@ModelAttribute("feedback") Feedback feedback) {
+    public String saveFeedback(@Valid @ModelAttribute("feedback") Feedback feedback,
+                               BindingResult result, Model model) {
+        if(result.hasErrors()){
+            model.addAttribute("feedback", feedback);
+            return "feedback/feedback-form";
+        }
         feedbackService.save(feedback);
         return "redirect:/RepairAgency/requests";
     }

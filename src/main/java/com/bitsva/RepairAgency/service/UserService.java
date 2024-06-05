@@ -1,6 +1,10 @@
 package com.bitsva.RepairAgency.service;
 
 import com.bitsva.RepairAgency.config.CustomUserDetails;
+import com.bitsva.RepairAgency.dto.UserCreationDTO;
+import com.bitsva.RepairAgency.dto.UserMapper;
+import com.bitsva.RepairAgency.dto.UserResponseDTO;
+import com.bitsva.RepairAgency.dto.UserUpdateDTO;
 import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private UserMapper userMapper;
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> usersList() {
@@ -27,29 +33,26 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public boolean save(User user) {
-        User existingUser = userRepository.findByEmail(user.getEmail());
+    public boolean save(UserCreationDTO dto) {
+        User existingUser = userRepository.findByEmail(dto.getEmail());
 
         if (existingUser != null) {
             return false;
         }
 
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        dto.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+        User user = userMapper.mapUserCreationDTOToUser(dto);
         userRepository.save(user);
         return true;
     }
 
-    public boolean update(User user, String password) {
-        User existingUser = userRepository.findById(user.getId()).orElse(null);
-        existingUser.setEmail(user.getEmail());
-        existingUser.setFirstName(user.getFirstName());
-        existingUser.setLastName(user.getLastName());
-        existingUser.setPhone(user.getPhone());
-        existingUser.setRole(user.getRole());
-        if (!password.equals("")) {
-            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public boolean update(UserUpdateDTO dto) {
+        User existingUser = userRepository.findById(dto.getId()).orElse(null);
+        if (dto.getPassword() != null) {
+            dto.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         }
-        userRepository.save(existingUser);
+        User user = userMapper.mapUserUpdateDTOToUser(dto, existingUser);
+        userRepository.save(user);
         return true;
     }
 
@@ -69,8 +72,6 @@ public class UserService {
         return userRepository.checkPhoneForExistingUser(phone, id) > 0;
     }
 
-    //TODO public boolean checkIfUserActive()
-
     @Transactional
     public void updateBalance(CustomUserDetails loggedUser, long amountOfMoney) {
         userRepository.updateBalance(amountOfMoney, loggedUser.getId());
@@ -81,13 +82,15 @@ public class UserService {
         userRepository.updateBalance(amountOfMoney, userId);
     }
 
-    public User getById(long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserResponseDTO getUserDTO(long id) {
+        User user = userRepository.findById(id).orElse(null);
+        return userMapper.mapUserToUserResponseDTO(user);
     }
 
-
-    public void deleteById(long id) {
-        userRepository.deleteById(id);
+    public void deleteById(long id, String email) {
+        if (userRepository.checkUseRole(id) == 0 && userRepository.checkEmailForExistingUser(email, id) == 0) {
+            userRepository.deleteById(id);
+        }
     }
 
     public Page<User> findPaginated(int page, int size) {
@@ -95,10 +98,8 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
-    public void changeAccountStatus(long id, boolean isEnabled) {
-        User user = getById(id);
-        user.setEnabled(isEnabled);
-        userRepository.save(user);
+    public void updateRating(float averageRating, Long id) {
+        userRepository.updateRating(averageRating, id);
     }
 }
 

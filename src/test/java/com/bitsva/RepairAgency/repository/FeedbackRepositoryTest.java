@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class FeedbackRepositoryTests {
+public class FeedbackRepositoryTest {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
