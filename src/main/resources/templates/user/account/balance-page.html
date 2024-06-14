@@ -15,16 +15,16 @@
 <body>
 <header th:insert="~{fragments/header :: header}"></header>
 
-<br /><br /><br />
+<br/><br/><br/>
 <div class="col-md-6 offset-md-3">
+    <div th:if="${param.success}">
+        <div class="alert alert-info">
+            Your balance has been successfully replenished!
+        </div>
+    </div>
     <div class="card text-center">
         <div class="card-header">
             <h2 class="text-center">Top up your balance:</h2>
-        </div>
-        <div th:if="${param.success}">
-            <div class="alert alert-info">
-                Your balance has been successfully replenished!
-            </div>
         </div>
         <div class="card-body">
             <br/><br/>
@@ -34,18 +34,17 @@
             <br/><br/><br/>
             <form th:action="@{/updateBalance}" role="form" method="post">
                 <div class="form-group">
-                    <input type="number" name="amountOfMoney">
+                    <input type="number" min="0" name="amountOfMoney">
                 </div>
                 <br/><br/>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-            <br /><br />
+            <br/><br/>
         </div>
     </div>
 </div>
-<br /><br /><br />
+<br/><br/><br/>
 
 <footer th:insert="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
-

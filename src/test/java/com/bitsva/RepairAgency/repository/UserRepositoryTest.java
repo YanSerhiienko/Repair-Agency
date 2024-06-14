@@ -1,6 +1,7 @@
 package com.bitsva.RepairAgency.repository;
 
 import com.bitsva.RepairAgency.entity.User;
+import com.bitsva.RepairAgency.feature.UserRole;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +12,35 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class UserRepositoryTests {
+public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    public void UserRepository_Save_ReturnSavedUser() {
+    public void shouldFindUserByEmail() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        User userByEmail = userRepository.findByEmail("goodman@mail.com");
+
+        Assertions.assertThat(userByEmail).isEqualTo(savedUser);
+    }
+
+    @Test
+    public void save_ReturnSavedUser() {
+        User user = User.builder()
+                .firstName("Saul")
+                .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -31,15 +50,17 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepository_GetAll_ReturnMoreThenOneUser() {
+    public void getAll_ReturnMoreThenOneUser() {
         User user1 = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         User user2 = User.builder()
                 .firstName("Kim")
                 .lastName("Wexler")
+                .email("wexler@mail.com")
                 .build();
 
         userRepository.save(user1);
@@ -52,10 +73,11 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepository_FindById_ReturnUserNotNull() {
+    public void findById_ReturnUserNotNull() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         userRepository.save(user);
@@ -66,10 +88,11 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void UserRepository_UpdateUser_ReturnUserNotNull() {
+    public void update_ReturnUserNotNull() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         userRepository.save(user);
@@ -82,13 +105,16 @@ public class UserRepositoryTests {
 
         Assertions.assertThat(updatedUser.getFirstName()).isNotNull();
         Assertions.assertThat(updatedUser.getLastName()).isNotNull();
+        Assertions.assertThat(updatedUser.getFirstName()).isEqualTo("Jimmy");
+        Assertions.assertThat(updatedUser.getLastName()).isEqualTo("McGill");
     }
 
     @Test
-    public void UserRepository_UserDelete_ReturnUserIsEmpty() {
+    public void delete_ReturnUserIsEmpty() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         userRepository.save(user);

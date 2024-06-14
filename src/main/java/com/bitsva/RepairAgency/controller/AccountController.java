@@ -1,6 +1,9 @@
 package com.bitsva.RepairAgency.controller;
 
 import com.bitsva.RepairAgency.config.CustomUserDetails;
+import com.bitsva.RepairAgency.dto.UserCreationDTO;
+import com.bitsva.RepairAgency.dto.UserMapper;
+import com.bitsva.RepairAgency.dto.UserUpdateDTO;
 import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.service.UserService;
 import jakarta.validation.Valid;
@@ -21,6 +24,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class AccountController {
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("/login")
     public String login() {
@@ -29,63 +33,62 @@ public class AccountController {
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
-        User user = new User();
+        UserCreationDTO user = new UserCreationDTO();
         model.addAttribute("user", user);
-        System.out.println("user.toString() = " + user.toString());
         return "/user/account/register";
     }
 
     @PostMapping("/register/save")
-    public String registration(@Valid @ModelAttribute("user") User user,
+    public String registration(@Valid @ModelAttribute("user") UserCreationDTO dto,
                                BindingResult result,
                                Model model) {
 
-        if (userService.checkIfEmailExists(user.getEmail())) {
+        if (userService.checkIfEmailExists(dto.getEmail())) {
             FieldError emailError = new FieldError("user", "email", "User with such email already exists");
             result.addError(emailError);
         }
-        if (userService.checkIfPhoneExists(user.getPhone())) {
+        if (userService.checkIfPhoneExists(dto.getPhone())) {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
         if (result.hasErrors()) {
-            model.addAttribute("user", user);
+            model.addAttribute("user", dto);
             return "/user/account/register";
         }
 
-        userService.save(user);
+        userService.save(dto);
         return "redirect:/register?success";
     }
 
     @GetMapping("/profile")
     public String viewAccount(Principal loggedUser, Model model) {
         User user = userService.findUserByEmail(loggedUser.getName());
-        model.addAttribute("user", user);
+        UserUpdateDTO dto = userMapper.mapUserToUserUpdateDTO(user);
+        model.addAttribute("user", dto);
         return "/user/account/profile";
     }
 
     @PostMapping("/profileUpdate")
     public String updateAccount(@AuthenticationPrincipal CustomUserDetails loggedUser,
-                                @RequestParam(name = "password", required = false) String password,
-                                @Valid @ModelAttribute("user") User user,
+                                @Valid @ModelAttribute("user") UserUpdateDTO dto,
                                 BindingResult result, Model model) {
 
-        if (userService.checkEmailForExistingUser(user.getEmail(), user.getId())) {
+        if (userService.checkIfEmailLinkedToAnotherUser(dto.getEmail(), dto.getId())) {
             FieldError emailError = new FieldError("user", "email", "User with such email already exists");
             result.addError(emailError);
         }
-        if (userService.checkPhoneForExistingUser(user.getPhone(), user.getId())) {
+        if (userService.checkIfPhoneLinkedToAnotherUser(dto.getPhone(), dto.getId())) {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
         if (result.hasErrors()) {
-            model.addAttribute("user", user);
+            model.addAttribute("user", dto);
             return "/user/account/profile";
         }
 
-        userService.update(user, password);
-        loggedUser.setFirstName(user.getFirstName());
-        loggedUser.setLastName(user.getLastName());
+        userService.update(dto);
+        loggedUser.setFirstName(dto.getFirstName());
+        loggedUser.setLastName(dto.getLastName());
 
         return "redirect:/profile?success";
     }

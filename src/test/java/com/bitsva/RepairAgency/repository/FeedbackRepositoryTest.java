@@ -12,14 +12,52 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class FeedbackRepositoryTests {
+public class FeedbackRepositoryTest {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
     @Test
-    public void FeedbackRepository_Save_ReturnSavedFeedback() {
+    public void averageRepairerRating() {
+        Feedback feedback1 = Feedback.builder()
+                .repairerId(1L)
+                .rating(5L)
+                .build();
+        Feedback feedback2 = Feedback.builder()
+                .repairerId(1L)
+                .rating(4L)
+                .build();
+        Feedback feedback3 = Feedback.builder()
+                .repairerId(1L)
+                .rating(3L)
+                .build();
+
+        feedbackRepository.save(feedback1);
+        feedbackRepository.save(feedback2);
+        feedbackRepository.save(feedback3);
+
+        float repairerRating = feedbackRepository.averageRepairerRating(1L);
+        assertEquals(4, repairerRating);
+    }
+
+    @Test
+    public void findByRequestId() {
+        Feedback feedback = Feedback.builder()
+                .requestId(1L)
+                .build();
+
+        feedbackRepository.save(feedback);
+
+        Feedback byRequestId = feedbackRepository.findByRequestId(1L);
+
+        assertEquals(feedback, byRequestId);
+    }
+
+    @Test
+    public void save_ReturnSavedFeedback() {
         Feedback feedback = Feedback.builder()
                 .feedbackText("Good job!")
                 .feedbackDate(LocalDate.now().toString())
@@ -33,7 +71,7 @@ public class FeedbackRepositoryTests {
     }
 
     @Test
-    public void FeedbackRepository_GetAll_ReturnMoreThenOneFeedback() {
+    public void getAll_ReturnMoreThenOneFeedback() {
         Feedback feedback1 = Feedback.builder()
                 .feedbackText("Good job!")
                 .feedbackDate(LocalDate.now().toString())
@@ -56,7 +94,7 @@ public class FeedbackRepositoryTests {
     }
 
     @Test
-    public void FeedbackRepository_FindById_ReturnFeedbackNotNull() {
+    public void findById_ReturnFeedbackNotNull() {
         Feedback feedback = Feedback.builder()
                 .feedbackText("Good job!")
                 .feedbackDate(LocalDate.now().toString())
@@ -70,9 +108,8 @@ public class FeedbackRepositoryTests {
         Assertions.assertThat(feedbackById).isNotNull();
     }
 
-    //TODO is it really needed
     @Test
-    public void FeedbackRepository_UpdateFeedback_ReturnFeedbackNotNull() {
+    public void update_ReturnFeedbackNotNull() {
         Feedback feedback = Feedback.builder()
                 .feedbackText("Good job!")
                 .feedbackDate(LocalDate.now().toString())
@@ -92,7 +129,7 @@ public class FeedbackRepositoryTests {
     }
 
     @Test
-    public void FeedbackRepository_FeedbackDelete_ReturnFeedbackIsEmpty() {
+    public void delete_ReturnFeedbackIsEmpty() {
         Feedback feedback = Feedback.builder()
                 .feedbackText("Good job!")
                 .feedbackDate(LocalDate.now().toString())

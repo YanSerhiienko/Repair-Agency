@@ -31,7 +31,6 @@
             <th>Phone</th>
             <th>Balance</th>
             <th>Role</th>
-            <th>Account status</th>
             <th>Edit user</th>
         </tr>
         </thead>
@@ -39,7 +38,8 @@
         <tr th:each="user : ${users}">
             <td th:text="${user.id}"></td>
             <td>
-                <a th:href="@{/users/userInfo/{id}(id=${user.id})}" th:text="${user.getFullName}" style="text-decoration: none"></a>
+                <a th:href="@{/users/userInfo/{id}(id=${user.id})}" th:text="${user.getFullName}"
+                   style="text-decoration: none"></a>
             </td>
             <td th:text="${user.email}"></td>
             <td th:text="${user.phone}"></td>
@@ -48,22 +48,6 @@
                 <p1 th:unless="${user.role.label == 'Client'}">No balance</p1>
             </td>
             <td th:text="${user.role.label}"></td>
-            <td>
-                <p1 th:text="${user.enabled ? 'Enabled' : 'Disabled'}"></p1>
-                <br>
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-                        data-bs-auto-close="outside">
-                    Update status
-                </button>
-                <form class="dropdown-menu p-4" th:action="@{/users/changeAccountStatus}" method="POST">
-                    <select class="custom-select" id="inputGroupSelect01" name="isEnabled">
-                        <option name="isEnabled" th:value="${true}">Enabled</option>
-                        <option name="isEnabled" th:value="${false}">Disabled</option>
-                    </select>
-                    <input type="hidden" name="id" th:value="${user.getId()}">
-                    <button type="submit" class="btn btn-secondary">Update</button>
-                </form>
-            </td>
             <td>
                 <div class="d-flex gap-3 mb-3">
                     <form action="/users/editUser" method="get" class="mr-1">

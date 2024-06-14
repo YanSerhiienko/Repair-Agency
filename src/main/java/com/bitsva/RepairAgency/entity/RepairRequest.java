@@ -2,15 +2,11 @@ package com.bitsva.RepairAgency.entity;
 
 import com.bitsva.RepairAgency.feature.RepairRequestCompletionStatus;
 import com.bitsva.RepairAgency.feature.RepairRequestPaymentStatus;
-import com.bitsva.RepairAgency.feature.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -37,17 +33,13 @@ public class RepairRequest {
     @JoinColumn(name = "repairer_id")
     private User repairer;
 
-    @Column
     private String creationDate;
 
-    @Column
     @Size(min = 5, max = 50, message = "Size must be between 10 and 10000 characters")
     private String description;
 
-    @Column
     private Long cost;
 
-    @Column
     private Long depositedToPay;
 
     @Enumerated(EnumType.STRING)
@@ -57,6 +49,7 @@ public class RepairRequest {
     private RepairRequestPaymentStatus paymentStatus;
 
     private boolean isHasFeedback;
+
     public User getClient() {
         return client;
     }

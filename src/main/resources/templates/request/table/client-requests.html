@@ -19,9 +19,6 @@
             <td th:text="${request.description}"></td>
             <td th:text="${request.creationDate}"></td>
             <td>
-                <!--<th:block th:if="${request.getRepairerName} == 'Not assigned'">
-                  <p1 th:text="'Not assigned'"></p1> <br>
-                </th:block>-->
                 <span th:if="${request.getRepairerName} == 'Not assigned'">Not assigned</span>
                 <a th:unless="${request.getRepairerName} == 'Not assigned'"
                    th:href="@{/users/userInfo/{id}(id=${request.getRepairerId})}" th:text="${request.getRepairerName}"
@@ -45,7 +42,7 @@
                                 aria-expanded="false" data-bs-auto-close="outside">
                             Pay
                         </button>
-                        <form class="dropdown-menu p-4" th:action="@{/RepairAgency/payForRequest}" method="POST">
+                        <form class="dropdown-menu p-4" th:action="@{/requests/payForRequest}" method="POST">
                             <input type="hidden" name="id" th:value="${request.getId()}">
                             <th:block th:if="${balance} >= ${request.cost - request.depositedToPay}">
                                 <p1 th:text="'Deposit ' + ${request.cost - request.depositedToPay} + ' UAH for payment?'"></p1>
@@ -65,7 +62,7 @@
             <td th:text="${request.paymentStatus.label}"></td>
             <td>
                 <div class="d-flex gap-3 mb-3">
-                    <form action="/RepairAgency/editRequest" method="get" class="mr-1">
+                    <form action="/requests/editRequest" method="get" class="mr-1">
                         <input type="hidden" name="id" th:value="${request.getId()}">
                         <button th:if="${request.completionStatus.label == 'Not started'}" type="submit"
                                 class="btn btn-warning">
@@ -87,7 +84,7 @@
                         </button>
                     </form>
                     <br>
-                    <form action="/RepairAgency/deleteRequest" method="post" class="mr-1">
+                    <form action="/requests/deleteRequest" method="post" class="mr-1">
                         <input type="hidden" name="id" th:value="${request.getId()}">
                         <button th:if="${request.completionStatus.label == 'Not started'}" type="submit"
                                 class="btn btn-danger">
@@ -105,9 +102,6 @@
                                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"></path>
                             </svg>
                         </button>
-                        <!--<button type="submit" th:unless="${request.completionStatus.label == 'Not started'}"
-                                class="btn btn-outline-primary" disabled>Delete
-                        </button>-->
                     </form>
                 </div>
             </td>
@@ -123,13 +117,12 @@
                             class="btn btn-warning">Add
                     </button>
                 </form>
-                <form th:unless="${request.isHasFeedback == false}" th:action="@{/{id}/feedback(id=${request.id})}" class="mr-1">
+                <form th:unless="${request.isHasFeedback == false}"
+                      th:action="@{/requests/{id}/feedback(id=${request.id})}" class="mr-1">
                     <input type="hidden" name="id" th:value="${request.getId()}">
                     <button type="submit" class="btn btn-primary">Read
                     </button>
                 </form>
-                <!--<a th:unless="${request.isHasFeedback == false}" th:href="@{/{id}/feedback(id=${request.id})}"><h4
-                        th:text="'Read feedback'" class="title"></h4></a>-->
             </td>
         </tr>
         </tbody>
