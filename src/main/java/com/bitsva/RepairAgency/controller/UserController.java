@@ -27,11 +27,11 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/list")
-    public String requestsList(Model model) {
+    public String usersList(Model model) {
         return findPaginated(1, model);
     }
 
-    @GetMapping("/page/{pageNumber}")
+    @GetMapping("/list/page/{pageNumber}")
     public String findPaginated(@PathVariable("pageNumber") int pageNumber, Model model) {
         int pageSize = 5;
         Page<User> page = userService.findPaginated(pageNumber, pageSize);
@@ -44,7 +44,7 @@ public class UserController {
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("users", dtoList);
 
-        return "user/users";
+        return "user/user-list";
     }
 
     @PostMapping("/saveUser")
@@ -59,7 +59,7 @@ public class UserController {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             model.addAttribute("user", dto);
             return "user/user-form";
         }
@@ -73,15 +73,15 @@ public class UserController {
                              RedirectAttributes redirectAttributes,
                              BindingResult result, Model model) {
 
-        if (userService.checkEmailForExistingUser(dto.getEmail(), dto.getId())) {
+        if (userService.checkIfEmailLinkedToAnotherUser(dto.getEmail(), dto.getId())) {
             FieldError emailError = new FieldError("user", "email", "User with such email already exists");
             result.addError(emailError);
         }
-        if (userService.checkPhoneForExistingUser(dto.getPhone(), dto.getId())) {
+        if (userService.checkIfPhoneLinkedToAnotherUser(dto.getPhone(), dto.getId())) {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             model.addAttribute("user", dto);
             return "user/user-form";
         }
@@ -95,10 +95,8 @@ public class UserController {
 
     @GetMapping("/createUser")
     public String createUser(Model model) {
-        UserCreationDTO creationDTO = new UserCreationDTO();
-        User user = userMapper.mapUserCreationDTOToUser(creationDTO);
-        UserUpdateDTO updateDTO = userMapper.mapUserToUserUpdateDTO(user);
-        model.addAttribute("user", updateDTO);
+        UserCreationDTO dto = new UserCreationDTO();
+        model.addAttribute("user", dto);
         return "user/user-form";
     }
 

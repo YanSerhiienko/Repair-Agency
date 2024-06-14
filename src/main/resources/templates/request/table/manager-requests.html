@@ -30,7 +30,7 @@
                         aria-expanded="false" data-bs-auto-close="outside">
                     Update repairer
                 </button>
-                <form class="dropdown-menu p-4" th:action="@{/RepairAgency/updateRepairer}" method="POST">
+                <form class="dropdown-menu p-4" th:action="@{/requests/updateRepairer}" method="POST">
                     <select class="custom-select" id="inputGroupSelect01" name=repairer>
                         <option th:each="repairer : ${repairers}" th:text="${repairer}" th:value="${repairer}"></option>
                         <input type="hidden" name="id" th:value="${request.getId()}">
@@ -46,7 +46,7 @@
                         aria-expanded="false" data-bs-auto-close="outside">
                     Update cost
                 </button>
-                <form class="dropdown-menu p-4" th:action="@{/RepairAgency/updateCost}" method="POST">
+                <form class="dropdown-menu p-4" th:action="@{/requests/updateCost}" method="POST">
                     <input type="hidden" name="id" th:value="${request.getId()}">
                     <input type="number" min="0" name="cost" th:value="${request.getCost()}">
                     <button type="submit" class="btn btn-secondary">Update</button>
@@ -59,7 +59,7 @@
                         aria-expanded="false" data-bs-auto-close="outside">
                     Update status
                 </button>
-                <form class="dropdown-menu p-4" th:action="@{/RepairAgency/changePaymentStatus}" method="POST">
+                <form class="dropdown-menu p-4" th:action="@{/requests/changePaymentStatus}" method="POST">
                     <select class="custom-select" id="inputGroupSelect03" name="paymentStatus">
                         <option name="paymentStatus" th:value="AWAITING_PAYMENT">Awaiting payment</option>
                         <option name="paymentStatus" th:value="PAID">Paid</option>
@@ -75,7 +75,7 @@
                         th:text="'Read'" class="title"></h4></a>
             </td>
             <td>
-                <form action="/RepairAgency/deleteRequest" method="post" class="mr-1">
+                <form action="/requests/deleteRequest" method="post" class="mr-1">
                     <input type="hidden" name="id" th:value="${request.getId()}">
                     <button th:if="${request.completionStatus.label == 'Not started'}" type="submit"
                             class="btn btn-warning">

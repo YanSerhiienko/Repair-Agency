@@ -19,9 +19,11 @@ public class UserResponseDTO {
     private String phone;
     private Float rating;
     private UserRole role;
+
     public String getFullName() {
         return lastName + " " + firstName;
     }
+
     public String getRating() {
         return rating == null ? "Repairer has no rating yet" : rating.toString();
     }

@@ -27,7 +27,7 @@
 
                     <div class="card-body">
                         <div class="form-group">
-                                <th:block th:if="${feedback.rating == 1}">
+                            <th:block th:if="${feedback.rating == 1}">
                                 <h1>
                                     <span class="fa fa-star checked"></span>
                                     <span class="fa fa-star"></span>
@@ -36,51 +36,51 @@
                                     <span class="fa fa-star"></span>
                                     <p th:text="${feedback.rating}" class="description"></p>
                                 </h1>
-                                </th:block>
-                                <th:block th:if="${feedback.rating == 2}">
-                                    <h1>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star"></span>
-                                        <span class="fa fa-star"></span>
-                                        <span class="fa fa-star"></span>
-                                        <p th:text="${feedback.rating}" class="description"></p>
-                                    </h1>
-                                </th:block>
-                                <th:block th:if="${feedback.rating == 3}">
-                                    <h1>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star"></span>
-                                        <span class="fa fa-star"></span>
-                                        <p th:text="${feedback.rating}" class="description"></p>
-                                    </h1>
-                                </th:block>
-                                <th:block th:if="${feedback.rating == 4}">
-                                    <h1>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star"></span>
-                                        <p th:text="${feedback.rating}" class="description"></p>
-                                    </h1>
-                                </th:block>
-                                <th:block th:if="${feedback.rating == 5}">
-                                    <h1 >
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                        <span class="fa fa-star checked"></span>
-                                    </h1>
-                                </th:block>
+                            </th:block>
+                            <th:block th:if="${feedback.rating == 2}">
+                                <h1>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <p th:text="${feedback.rating}" class="description"></p>
+                                </h1>
+                            </th:block>
+                            <th:block th:if="${feedback.rating == 3}">
+                                <h1>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                    <p th:text="${feedback.rating}" class="description"></p>
+                                </h1>
+                            </th:block>
+                            <th:block th:if="${feedback.rating == 4}">
+                                <h1>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star"></span>
+                                    <p th:text="${feedback.rating}" class="description"></p>
+                                </h1>
+                            </th:block>
+                            <th:block th:if="${feedback.rating == 5}">
+                                <h1>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                </h1>
+                            </th:block>
                             <h3 th:text="'Your rating: ' + ${feedback.rating}"></h3>
                         </div>
                         <h4 th:text="${feedback.feedbackText}"></h4>
                         <div class="form-group mb-3 login-btn">
-                            <span><a th:href="@{/RepairAgency/requests}">Back to the list</a></span>
+                            <span><a th:href="@{/requests/list}">Back to the list</a></span>
                         </div>
                     </div>
                 </div>
@@ -92,4 +92,3 @@
 <footer th:insert="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
-

@@ -4,7 +4,6 @@ import com.bitsva.RepairAgency.entity.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
@@ -42,19 +41,6 @@ public class UserMapper {
         BeanUtils.copyProperties(user, response);
         return response;
     }
-
-    /*public PageableUserResponseDTO mapUsersPageToPageableUserResponseDTO(Page<User> usersPage) {
-        List<User> listOfUsers = usersPage.getContent();
-        List<UserResponseDTO> userResponseDTO = mapUserToUserResponseDTO(listOfUsers);
-
-        return PageableUserResponseDTO.builder()
-                .content(userResponseDTO)
-                .pageNo(usersPage.getNumber())
-                .pageSize(usersPage.getSize())
-                .totalElements(usersPage.getTotalElements())
-                .totalPages(usersPage.getTotalPages())
-                .last(usersPage.isLast()).build();
-    }*/
 
     public List<UserResponseDTO> mapUserToUserResponseDTO(List<User> users) {
         if (users == null) {

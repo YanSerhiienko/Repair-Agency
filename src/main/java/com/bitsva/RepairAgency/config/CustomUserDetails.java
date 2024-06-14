@@ -2,7 +2,6 @@ package com.bitsva.RepairAgency.config;
 
 import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.feature.UserRole;
-import com.bitsva.RepairAgency.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

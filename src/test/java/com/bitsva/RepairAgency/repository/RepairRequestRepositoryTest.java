@@ -1,30 +1,101 @@
 package com.bitsva.RepairAgency.repository;
 
 import com.bitsva.RepairAgency.entity.RepairRequest;
+import com.bitsva.RepairAgency.entity.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class RepairRequestRepositoryTest {
     @Autowired
     private RepairRequestRepository requestRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
-    public void RequestRepository_Save_ReturnSavedRequest() {
-        RepairRequest request = RepairRequest.builder()
-                .description("Fix it please")
-                .creationDate(LocalDate.now().toString())
-                .cost(100L)
+    public void searchByClientId() {
+        User client = User.builder()
+                .id(1L)
+                .firstName("Test")
+                .lastName("Client")
+                .email("client@mail.com")
                 .build();
+        User repairer = User.builder()
+                .id(2L)
+                .firstName("Test")
+                .lastName("Repairer")
+                .email("repirer@mail.com")
+                .build();
+
+        long id = 1L;
+        PageRequest pageable = PageRequest.of(0, 1);
+
+        RepairRequest request = getRequest();
+        request.setClient(client);
+        request.setRepairer(repairer);
+
+        userRepository.save(client);
+        userRepository.save(repairer);
+        requestRepository.save(request);
+
+        Page<RepairRequest> repairRequests = requestRepository.searchByClientId(id, pageable);
+        RepairRequest pagingRequest = repairRequests.getContent().get(0);
+
+        assertEquals(1, repairRequests.getTotalElements());
+        assertEquals(request, pagingRequest);
+    }
+
+    @Test
+    public void searchByRepairerId() {
+        User client = User.builder()
+                .id(1L)
+                .firstName("Test")
+                .lastName("Client")
+                .email("client@mail.com")
+                .build();
+        User repairer = User.builder()
+                .id(2L)
+                .firstName("Test")
+                .lastName("Repairer")
+                .email("repirer@mail.com")
+                .build();
+
+        long id = 2L;
+        PageRequest pageable = PageRequest.of(0, 1);
+
+        RepairRequest request = getRequest();
+        request.setClient(client);
+        request.setRepairer(repairer);
+
+        userRepository.save(client);
+        userRepository.save(repairer);
+        requestRepository.save(request);
+
+        Page<RepairRequest> repairRequests = requestRepository.searchByRepairerId(id, pageable);
+        RepairRequest pagingRequest = repairRequests.getContent().get(0);
+
+        assertEquals(1, repairRequests.getTotalElements());
+        assertEquals(request, pagingRequest);
+    }
+
+    @Test
+    public void save_ReturnSavedRequest() {
+        RepairRequest request = getRequest();
 
         RepairRequest savedRequest = requestRepository.save(request);
 
@@ -33,18 +104,11 @@ public class RepairRequestRepositoryTest {
     }
 
     @Test
-    public void RequestRepository_GetAll_ReturnMoreThenOneRequest() {
-        RepairRequest request1 = RepairRequest.builder()
-                .description("Fix it please")
-                .creationDate(LocalDate.now().toString())
-                .cost(100L)
-                .build();
+    public void getAll_ReturnMoreThenOneRequest() {
+        RepairRequest request1 = getRequest();
 
-        RepairRequest request2 = RepairRequest.builder()
-                .description("Fix it again please")
-                .creationDate(LocalDate.now().toString())
-                .cost(100L)
-                .build();
+        RepairRequest request2 = getRequest();
+        request2.setDescription("fix it again please");
 
         requestRepository.save(request1);
         requestRepository.save(request2);
@@ -56,12 +120,8 @@ public class RepairRequestRepositoryTest {
     }
 
     @Test
-    public void RequestRepository_FindById_ReturnRequestNotNull() {
-        RepairRequest request = RepairRequest.builder()
-                .description("Fix it please")
-                .creationDate(LocalDate.now().toString())
-                .cost(100L)
-                .build();
+    public void findById_ReturnRequestNotNull() {
+        RepairRequest request = getRequest();
 
         requestRepository.save(request);
 
@@ -71,12 +131,8 @@ public class RepairRequestRepositoryTest {
     }
 
     @Test
-    public void RequestRepository_UpdateRequest_ReturnRequestNotNull() {
-        RepairRequest request = RepairRequest.builder()
-                .description("Fix it please")
-                .creationDate(LocalDate.now().toString())
-                .cost(100L)
-                .build();
+    public void update_ReturnRequestNotNull() {
+        RepairRequest request = getRequest();
 
         requestRepository.save(request);
 
@@ -93,12 +149,8 @@ public class RepairRequestRepositoryTest {
     }
 
     @Test
-    public void RequestRepository_RequestDelete_ReturnRequestIsEmpty() {
-        RepairRequest request = RepairRequest.builder()
-                .description("Fix it please")
-                .creationDate(LocalDate.now().toString())
-                .cost(100L)
-                .build();
+    public void delete_ReturnRequestIsEmpty() {
+        RepairRequest request = getRequest();
 
         requestRepository.save(request);
 
@@ -106,5 +158,13 @@ public class RepairRequestRepositoryTest {
         Optional<RepairRequest> requestById = requestRepository.findById(request.getId());
 
         Assertions.assertThat(requestById).isEmpty();
+    }
+
+    private RepairRequest getRequest() {
+        return RepairRequest.builder()
+                .description("Fix it please")
+                .creationDate(LocalDate.now().toString())
+                .cost(100L)
+                .build();
     }
 }

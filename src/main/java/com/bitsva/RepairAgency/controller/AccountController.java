@@ -3,7 +3,6 @@ package com.bitsva.RepairAgency.controller;
 import com.bitsva.RepairAgency.config.CustomUserDetails;
 import com.bitsva.RepairAgency.dto.UserCreationDTO;
 import com.bitsva.RepairAgency.dto.UserMapper;
-import com.bitsva.RepairAgency.dto.UserResponseDTO;
 import com.bitsva.RepairAgency.dto.UserUpdateDTO;
 import com.bitsva.RepairAgency.entity.User;
 import com.bitsva.RepairAgency.service.UserService;
@@ -74,11 +73,11 @@ public class AccountController {
                                 @Valid @ModelAttribute("user") UserUpdateDTO dto,
                                 BindingResult result, Model model) {
 
-        if (userService.checkEmailForExistingUser(dto.getEmail(), dto.getId())) {
+        if (userService.checkIfEmailLinkedToAnotherUser(dto.getEmail(), dto.getId())) {
             FieldError emailError = new FieldError("user", "email", "User with such email already exists");
             result.addError(emailError);
         }
-        if (userService.checkPhoneForExistingUser(dto.getPhone(), dto.getId())) {
+        if (userService.checkIfPhoneLinkedToAnotherUser(dto.getPhone(), dto.getId())) {
             FieldError phoneError = new FieldError("user", "phone", "User with such phone already exists");
             result.addError(phoneError);
         }

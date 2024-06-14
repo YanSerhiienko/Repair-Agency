@@ -8,34 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
 
-//@DataJpaTest
-//@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-@Testcontainers
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class UserRepositoryTest {
-    @Container
-    public static MySQLContainer container = new MySQLContainer()
-            .withUsername("saul")
-            .withPassword("1111")
-            .withDatabaseName("test");
-
-    @DynamicPropertySource
-    static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", container::getJdbcUrl);
-        registry.add("spring.datasource.password", container::getPassword);
-        registry.add("spring.datasource.username", container::getUsername);
-    }
-
     @Autowired
     private UserRepository userRepository;
 
@@ -54,12 +35,12 @@ public class UserRepositoryTest {
         Assertions.assertThat(userByEmail).isEqualTo(savedUser);
     }
 
-//////////////////////////
     @Test
-    public void UserRepository_Save_ReturnSavedUser() {
+    public void save_ReturnSavedUser() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -69,15 +50,17 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void UserRepository_GetAll_ReturnMoreThenOneUser() {
+    public void getAll_ReturnMoreThenOneUser() {
         User user1 = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         User user2 = User.builder()
                 .firstName("Kim")
                 .lastName("Wexler")
+                .email("wexler@mail.com")
                 .build();
 
         userRepository.save(user1);
@@ -90,10 +73,11 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void UserRepository_FindById_ReturnUserNotNull() {
+    public void findById_ReturnUserNotNull() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         userRepository.save(user);
@@ -104,10 +88,11 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void UserRepository_UpdateUser_ReturnUserNotNull() {
+    public void update_ReturnUserNotNull() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         userRepository.save(user);
@@ -120,13 +105,16 @@ public class UserRepositoryTest {
 
         Assertions.assertThat(updatedUser.getFirstName()).isNotNull();
         Assertions.assertThat(updatedUser.getLastName()).isNotNull();
+        Assertions.assertThat(updatedUser.getFirstName()).isEqualTo("Jimmy");
+        Assertions.assertThat(updatedUser.getLastName()).isEqualTo("McGill");
     }
 
     @Test
-    public void UserRepository_UserDelete_ReturnUserIsEmpty() {
+    public void delete_ReturnUserIsEmpty() {
         User user = User.builder()
                 .firstName("Saul")
                 .lastName("Goodman")
+                .email("goodman@mail.com")
                 .build();
 
         userRepository.save(user);

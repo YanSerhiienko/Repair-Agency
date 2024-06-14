@@ -1,24 +1,12 @@
 package com.bitsva.RepairAgency.controller;
 
-import com.bitsva.RepairAgency.config.CustomUserDetails;
-import com.bitsva.RepairAgency.service.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@RequiredArgsConstructor
 public class MainController {
-    private final UserService userService;
-
-    @GetMapping("/index")
-    public String index() {
-        return "main/index";
-    }
-
     @GetMapping("/home")
-    public String homePage(@AuthenticationPrincipal CustomUserDetails loggedUser) {
+    public String homePage() {
         return "main/home";
     }
 

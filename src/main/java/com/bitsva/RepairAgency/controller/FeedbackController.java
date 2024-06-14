@@ -20,10 +20,11 @@ public class FeedbackController {
     @GetMapping("/addFeedback")
     public String addFeedback(@RequestParam(value = "id") long id, Model model) {
         RepairRequest request = requestService.getById(id);
-        Feedback feedback = new Feedback();
-        feedback.setRequestId(request.getId());
-        feedback.setClientId(request.getClientId());
-        feedback.setRepairerId(request.getRepairerId());
+        Feedback feedback = Feedback.builder()
+                .requestId(request.getId())
+                .clientId(request.getClientId())
+                .repairerId(request.getRepairerId())
+                .build();
         model.addAttribute("feedback", feedback);
         return "feedback/feedback-form";
     }
@@ -31,7 +32,7 @@ public class FeedbackController {
     @PostMapping("/saveFeedback")
     public String saveFeedback(@Valid @ModelAttribute("feedback") Feedback feedback,
                                BindingResult result, Model model) {
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             model.addAttribute("feedback", feedback);
             return "feedback/feedback-form";
         }
@@ -39,7 +40,7 @@ public class FeedbackController {
         return "redirect:/RepairAgency/requests";
     }
 
-    @GetMapping("{id}/feedback")
+    @GetMapping("/requests/{id}/feedback")
     public String feedbackInfo(@PathVariable(name = "id") long id, Model model) {
         Feedback feedback = feedbackService.getById(id);
         model.addAttribute("feedback", feedback);

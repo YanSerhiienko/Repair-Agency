@@ -33,7 +33,7 @@
                         class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
                         data-bs-auto-close="outside" th:text="${request.completionStatus.label}">
                 </button>
-                <form class="dropdown-menu p-4" th:action="@{/RepairAgency/changeCompletionStatus}" method="POST">
+                <form class="dropdown-menu p-4" th:action="@{/requests/changeCompletionStatus}" method="POST">
                     <select class="custom-select" id="inputGroupSelect01" name="completionStatus">
                         <option name="completionStatus" th:value="NOT_STARTED">Not started</option>
                         <option name="completionStatus" th:value="IN_PROGRESS">In progress</option>
@@ -47,11 +47,6 @@
                 <p1 th:if="${request.isHasFeedback == false}">No feedback yet</p1>
                 <a th:unless="${request.isHasFeedback == false}" th:href="@{/{id}/feedback(id=${request.id})}"><h4
                         th:text="'Read'" class="title"></h4></a>
-                <!--<form th:unless="${request.isHasFeedback == false}" th:action="@{/{id}/feedback(id=${request.id})}" class="mr-1">
-                    <input type="hidden" name="id" th:value="${request.getId()}">
-                    <button type="submit" class="btn btn-primary">Read
-                    </button>
-                </form>-->
             </td>
         </tr>
         </tbody>
