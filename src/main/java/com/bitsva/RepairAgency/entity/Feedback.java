@@ -27,7 +27,7 @@ public class Feedback {
 
     private Long rating;
 
-    @Size(min = 5, max = 50, message = "Size must be between 5 and 10000 characters")
+    @Size(min = 5, max = 10000, message = "Size must be between 5 and 10000 characters")
     private String feedbackText;
 
     private Long requestId;

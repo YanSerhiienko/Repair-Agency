@@ -35,7 +35,7 @@ class FeedbackServiceImplTest {
         RepairRequest request = getRequest();
 
         when(feedbackRepository.save(any(Feedback.class))).thenReturn(feedback);
-        when(feedbackRepository.averageRepairerRating(feedback.getRepairerId())).thenReturn(5.0f);
+        when(feedbackRepository.averageRepairerRating(feedback.getRepairerId())).thenReturn(5);
         doNothing().when(userService).updateRating(5, feedback.getRepairerId());
         when(requestRepository.findById(any())).thenReturn(Optional.ofNullable(request));
         when(requestRepository.save(any())).thenReturn(request);

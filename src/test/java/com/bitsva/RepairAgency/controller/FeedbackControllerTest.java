@@ -69,7 +69,7 @@ class FeedbackControllerTest {
 
         mvc.perform(post("/saveFeedback").flashAttr("feedback", feedback))
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(feedbackServiceImpl, times(1)).save(feedback);
     }

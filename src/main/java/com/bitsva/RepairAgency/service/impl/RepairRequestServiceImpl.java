@@ -60,7 +60,11 @@ public class RepairRequestServiceImpl implements RepairRequestService {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(long id, CustomUserDetails loggedUser) {
+        RepairRequest request = requestRepository.findById(id).orElse(null);
+        if (request.getCost() > 0) {
+            userService.updateBalance(loggedUser, request.getCost());
+        }
         requestRepository.deleteById(id);
     }
 

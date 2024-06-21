@@ -35,7 +35,7 @@ public class RepairRequest {
 
     private String creationDate;
 
-    @Size(min = 5, max = 50, message = "Size must be between 10 and 10000 characters")
+    @Size(min = 10, max = 10000, message = "Size must be between 10 and 10000 characters")
     private String description;
 
     private Long cost;

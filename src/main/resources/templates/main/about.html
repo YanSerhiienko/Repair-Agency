@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    <title>Contact us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" crossorigin="anonymous" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 </head>
 <body>
-<header th:insert="fragments/header :: header"></header>
-<h1>About us</h1>
-<div class="b-example-divider"></div>
-<div th:insert="fragments/footer :: footer"></div>
+<header th:insert="~{fragments/header :: header}"></header>
+
+<div class="container">
+    <div class="container bootstrap snippets bootdeys cms">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 content-card">
+                <div class="card card-form card-just-text" data-background="color" data-color="blue">
+                    <div class="form-wrap">
+                        <div class="content">
+                            <h7 class="title">About project:</h7>
+                            <p>This is my implementation of EPAM course project. This project is aimed at facilitating communication between managers,
+                                customers and executors of repair work, as well as at convenient management of user profiles and requests from customers.</p>
+                            <p>You can read more detailed description on project github page: <a href="https://github.com/YanSerhiienko/Repair-Agency" target="_blank">Repair Agency</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:insert="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

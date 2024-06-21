@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     @Query(nativeQuery = true, value = "SELECT AVG(rating) FROM feedbacks WHERE repairer_id = :repairerId")
-    float averageRepairerRating(@Param("repairerId") long repairerId);
+    int averageRepairerRating(@Param("repairerId") long repairerId);
 
     @Query(nativeQuery = true, value = "SELECT * FROM feedbacks WHERE request_id = :requestId")
     Feedback findByRequestId(@Param("requestId") long requestId);

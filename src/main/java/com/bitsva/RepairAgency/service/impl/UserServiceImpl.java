@@ -6,6 +6,7 @@ import com.bitsva.RepairAgency.dto.UserMapper;
 import com.bitsva.RepairAgency.dto.UserResponseDTO;
 import com.bitsva.RepairAgency.dto.UserUpdateDTO;
 import com.bitsva.RepairAgency.entity.User;
+import com.bitsva.RepairAgency.feature.UserRole;
 import com.bitsva.RepairAgency.repository.UserRepository;
 import com.bitsva.RepairAgency.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean update(UserUpdateDTO dto) {
         User existingUser = userRepository.findById(dto.getId()).orElse(null);
+        if (existingUser.getRole().equals(UserRole.ROLE_SUPER_ADMIN)) {
+            return false;
+        }
         if (dto.getPassword() != null) {
             dto.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         }
@@ -101,7 +105,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(long id, String email) {
-        if (userRepository.checkUserAreNotSuperAdmin(id) == 0 && userRepository.checkIfEmailLinkedToAnotherUser(email, id) == 0) {
+        if (userRepository.checkUserAreNotSuperAdmin(id) == 0 && userRepository.checkIfEmailLinkedToAnotherUser(email, id) > 0) {
             userRepository.deleteById(id);
         }
     }

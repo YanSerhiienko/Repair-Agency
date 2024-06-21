@@ -18,7 +18,7 @@ public interface RepairRequestService {
 
     public RepairRequest getById(long id);
 
-    public void deleteById(long id);
+    public void deleteById(long id, CustomUserDetails loggedUser);
 
     public void changePaymentStatus(long id, RepairRequestPaymentStatus paymentStatus);
 

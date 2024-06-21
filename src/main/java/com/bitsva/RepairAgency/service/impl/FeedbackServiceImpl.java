@@ -21,7 +21,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public void save(Feedback feedback) {
         feedbackRepository.save(feedback);
-        float averageRating = feedbackRepository.averageRepairerRating(feedback.getRepairerId());
+        int averageRating = feedbackRepository.averageRepairerRating(feedback.getRepairerId());
 
         userService.updateRating(averageRating, feedback.getRepairerId());
 

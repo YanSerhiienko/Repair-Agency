@@ -59,7 +59,7 @@ public class RepairRequestController {
             return "request/request-form";
         }
         requestService.save(request, loggedUser);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 
     @GetMapping("/createRequest")
@@ -77,42 +77,43 @@ public class RepairRequestController {
     }
 
     @PostMapping("/deleteRequest")
-    public String deleteRequest(@RequestParam(value = "id") long id) {
-        requestService.deleteById(id);
-        return "redirect:/RepairAgency/requests";
+    public String deleteRequest(@AuthenticationPrincipal CustomUserDetails loggedUser,
+                                @RequestParam(value = "id") long id) {
+        requestService.deleteById(id, loggedUser);
+        return "redirect:/requests/list";
     }
 
     @PostMapping("/changePaymentStatus")
     public String changePaymentStatus(@RequestParam(value = "id") long id,
                                       @RequestParam(value = "paymentStatus") RepairRequestPaymentStatus paymentStatus) {
         requestService.changePaymentStatus(id, paymentStatus);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 
     @PostMapping("/changeCompletionStatus")
     public String changeCompletionStatus(@RequestParam(value = "id") long id,
                                          @RequestParam(value = "completionStatus") RepairRequestCompletionStatus completionStatus) {
         requestService.changeCompletionStatus(id, completionStatus);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 
     @PostMapping("/updateCost")
     public String updateRequestCost(@RequestParam(value = "id") long id,
                                     @RequestParam(value = "cost") long cost) {
         requestService.updateCost(id, cost);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 
     @PostMapping("/updateRepairer")
     public String updateRequestRepairer(@RequestParam(value = "id") long id,
                                         @RequestParam(value = "repairer", required = false) String repairer) {
         requestService.updateRepairer(id, repairer);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 
     @PostMapping("/payForRequest")
     public String payForRequest(@RequestParam(value = "id") long id, @AuthenticationPrincipal CustomUserDetails loggedUser) {
         requestService.payForRequest(id, loggedUser);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 }

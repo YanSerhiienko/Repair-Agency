@@ -65,13 +65,9 @@
                 </g>
             </svg>
         </div>
+        </br>
         <h1>PAGE NOT FOUND</h1>
-        <div class="form-group mb-3 login-btn" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <span><a th:href="@{/users/list}">Back to the list</a></span>
-        </div>
-        <div class="form-group mb-3 login-btn" th:unless="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <span><a th:href="@{/RepairAgency/requests}">Back to the list</a></span>
-        </div>
+        <h1>OR YOU DON'T HAVE ACCESS TO IT</h1>
     </div>
 
 </div>

@@ -1,6 +1,7 @@
 package com.bitsva.RepairAgency.repository;
 
 import com.bitsva.RepairAgency.entity.User;
+import com.bitsva.RepairAgency.feature.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,8 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
+
+    User findByRole(UserRole role);
 
     @Query(nativeQuery = true, value =
             "SELECT CONCAT(id, \" \", last_name, \" \", first_name) AS full_name FROM users WHERE role = 'ROLE_REPAIRER'")

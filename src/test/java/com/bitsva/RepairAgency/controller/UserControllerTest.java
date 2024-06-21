@@ -54,7 +54,7 @@ class UserControllerTest {
         mvc.perform(get("/users/list"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/users"))
+                .andExpect(view().name("user/user-list"))
                 .andExpect(model().attribute("users", hasSize(1)))
                 .andExpect(model().attribute("users", hasItem(
                         allOf(
@@ -71,9 +71,9 @@ class UserControllerTest {
         when(userServiceImpl.findPaginated(3, 5))
                 .thenReturn(page);
 
-        mvc.perform(get("/users/page/3"))
+        mvc.perform(get("/users/list/page/3"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/users"))
+                .andExpect(view().name("user/user-list"))
                 .andExpect(model().attribute("page", is(page)))
                 .andExpect(model().attribute("currentPage", is(3)))
                 .andExpect(model().attribute("totalPages", is(page.getTotalPages())))

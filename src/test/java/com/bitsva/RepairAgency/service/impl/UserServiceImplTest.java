@@ -167,7 +167,7 @@ class UserServiceImplTest {
         String email = "testuser@mail.com";
 
         when(userRepository.checkUserAreNotSuperAdmin(id)).thenReturn(0);
-        when(userRepository.checkIfEmailLinkedToAnotherUser(email, id)).thenReturn(0);
+        when(userRepository.checkIfEmailLinkedToAnotherUser(email, id)).thenReturn(1);
         doNothing().when(userRepository).deleteById(id);
 
         userService.deleteById(id, email);
