@@ -24,7 +24,7 @@
                     <div class="card-body">
                         <h3 th:if="${user.role.label == 'Client'}">Information about client:</h3>
                         <h3 th:if="${user.role.label == 'Manager'}">Information about manager:</h3>
-                        <h3 th:if="${user.role.label == 'Admin'}">Information about admin:</h3>
+                        <h3 th:if="${user.role.label == 'Admin' or user.role.label == 'Super Admin'}">Information about admin:</h3>
                         <th:block th:if="${user.role.label == 'Repairer'}">
                             <h3>Information about repairer:</h3>
                             <th:block th:if="${user.rating} == 'Repairer has no rating yet'">

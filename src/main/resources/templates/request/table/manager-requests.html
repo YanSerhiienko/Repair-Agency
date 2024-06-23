@@ -26,7 +26,11 @@
             <td>
                 <p1 th:text="${request.getRepairerName}"></p1>
                 <br>
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                <button th:if="${request.completionStatus.label == 'Completed'}" type="button" class="btn btn-outline-primary" data-bs-toggle="dropdown"
+                        aria-expanded="false" data-bs-auto-close="outside" disabled>
+                    Update repairer
+                </button>
+                <button th:unless="${request.completionStatus.label == 'Completed'}" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false" data-bs-auto-close="outside">
                     Update repairer
                 </button>
@@ -42,20 +46,28 @@
             <td>
                 <p1 th:text="${request.getCost()} + ' UAH'"></p1>
                 <br>
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                <button th:if="${request.completionStatus.label == 'Completed'}" type="button" class="btn btn-outline-primary" data-bs-toggle="dropdown"
+                        aria-expanded="false" data-bs-auto-close="outside" disabled>
+                    Update cost
+                </button>
+                <button th:unless="${request.completionStatus.label == 'Completed'}" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false" data-bs-auto-close="outside">
                     Update cost
                 </button>
                 <form class="dropdown-menu p-4" th:action="@{/requests/updateCost}" method="POST">
                     <input type="hidden" name="id" th:value="${request.getId()}">
-                    <input type="number" min="0" name="cost" th:value="${request.getCost()}">
+                    <input type="number" min="1" name="cost" th:value="${request.getCost()}">
                     <button type="submit" class="btn btn-secondary">Update</button>
                 </form>
             </td>
             <td>
                 <p1 th:text="${request.paymentStatus.label}"></p1>
                 <br>
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                <button th:if="${request.completionStatus.label == 'Completed'}" type="button" class="btn btn-outline-primary" data-bs-toggle="dropdown"
+                        aria-expanded="false" data-bs-auto-close="outside" disabled>
+                    Update status
+                </button>
+                <button th:unless="${request.completionStatus.label == 'Completed'}" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false" data-bs-auto-close="outside">
                     Update status
                 </button>

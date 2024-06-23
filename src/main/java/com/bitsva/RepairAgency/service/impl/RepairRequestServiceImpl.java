@@ -97,12 +97,17 @@ public class RepairRequestServiceImpl implements RepairRequestService {
     public void updateCost(long id, long costUpdate) {
         RepairRequest request = requestRepository.findById(id).orElse(null);
         long moneyToChargeBack = 0;
-        if (request.getCost() != null && request.getCost() > costUpdate) {
-            moneyToChargeBack = request.getCost() - costUpdate;
+
+        if (request.getDepositedToPay() > costUpdate) {
+            moneyToChargeBack = request.getDepositedToPay() - costUpdate;
             userService.balanceChargeBack(request.getClientId(), moneyToChargeBack);
+            long newDepositedToPay = request.getDepositedToPay() - moneyToChargeBack;
+            request.setDepositedToPay(newDepositedToPay);
+        } else if (request.getDepositedToPay() < costUpdate) {
+            request.setCompletionStatus(RepairRequestCompletionStatus.NOT_STARTED);
+            request.setPaymentStatus(RepairRequestPaymentStatus.AWAITING_PAYMENT);
         }
-        long newDepositedToPay = request.getDepositedToPay() - moneyToChargeBack;
-        request.setDepositedToPay(newDepositedToPay);
+
         request.setCost(costUpdate);
         requestRepository.save(request);
     }

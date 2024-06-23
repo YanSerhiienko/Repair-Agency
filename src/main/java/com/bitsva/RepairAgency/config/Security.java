@@ -42,7 +42,7 @@ public class Security {
                                 .requestMatchers("/register/**", "/login/**").permitAll()
                                 .requestMatchers("/home", "/about", "/contacts").permitAll()
                                 .requestMatchers("/profile/**", "/profileUpdate").hasAnyRole("SUPER_ADMIN", "ADMIN", "CLIENT", "MANAGER", "REPAIRER")
-                                .requestMatchers("/balance", "/updateBalance").hasAnyRole("SUPER_ADMIN", "ADMIN", "CLIENT", "MANAGER", "REPAIRER")
+                                .requestMatchers("/balance", "/updateBalance").hasAnyRole("CLIENT")
                                 .requestMatchers("/requests/list/**").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/requests/createRequest", "/requests/saveRequest", "/requests/editRequest/**", "/requests/payForRequest").hasRole("CLIENT")
                                 .requestMatchers("/requests/deleteRequest").hasAnyRole("CLIENT", "MANAGER")
