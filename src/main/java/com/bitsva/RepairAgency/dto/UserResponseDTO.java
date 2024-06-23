@@ -25,6 +25,6 @@ public class UserResponseDTO {
     }
 
     public String getRating() {
-        return rating == null ? "Repairer has no rating yet" : rating.toString();
+        return rating == null || rating == 0 ? "Repairer has no rating yet" : rating.toString();
     }
 }

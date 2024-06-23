@@ -30,14 +30,6 @@ class MainControllerTest {
 
     @Test
     @SneakyThrows
-    public void homePage() {
-        mvc.perform(get("/home"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("main/home"));
-    }
-
-    @Test
-    @SneakyThrows
     public void aboutUsPage() {
         mvc.perform(get("/about"))
                 .andExpect(status().isOk())

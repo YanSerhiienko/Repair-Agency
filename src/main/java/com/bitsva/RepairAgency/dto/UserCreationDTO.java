@@ -43,5 +43,6 @@ public class UserCreationDTO {
     public UserCreationDTO() {
         this.balance = 0L;
         this.role = UserRole.ROLE_CLIENT;
+        this.rating=0f;
     }
 }

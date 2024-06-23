@@ -37,7 +37,7 @@ public class FeedbackController {
             return "feedback/feedback-form";
         }
         feedbackService.save(feedback);
-        return "redirect:/RepairAgency/requests";
+        return "redirect:/requests/list";
     }
 
     @GetMapping("/requests/{id}/feedback")

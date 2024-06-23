@@ -37,11 +37,12 @@ public class Security {
         http.csrf(Customizer.withDefaults())
                 .authorizeHttpRequests((request) ->
                         request
+                                .requestMatchers("/error").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                                 .requestMatchers("/register/**", "/login/**").permitAll()
                                 .requestMatchers("/home", "/about", "/contacts").permitAll()
                                 .requestMatchers("/profile/**", "/profileUpdate").hasAnyRole("SUPER_ADMIN", "ADMIN", "CLIENT", "MANAGER", "REPAIRER")
-                                .requestMatchers("/balance", "/updateBalance").hasAnyRole("SUPER_ADMIN", "ADMIN", "CLIENT", "MANAGER", "REPAIRER")
+                                .requestMatchers("/balance", "/updateBalance").hasAnyRole("CLIENT")
                                 .requestMatchers("/requests/list/**").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
                                 .requestMatchers("/requests/createRequest", "/requests/saveRequest", "/requests/editRequest/**", "/requests/payForRequest").hasRole("CLIENT")
                                 .requestMatchers("/requests/deleteRequest").hasAnyRole("CLIENT", "MANAGER")
@@ -49,7 +50,7 @@ public class Security {
                                 .requestMatchers("/requests/changeCompletionStatus").hasRole("REPAIRER")
                                 .requestMatchers("/addFeedback", "/saveFeedback").hasRole("CLIENT")
                                 .requestMatchers("/requests/{id}/feedback").hasAnyRole("CLIENT", "MANAGER", "REPAIRER")
-                                .requestMatchers("/users/list", "/users/page/*", "/users/saveUser", "/users/updateUser", "/users/createUser", "/users/editUser", "/users/deleteUser", "/users/changeAccountStatus").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                                .requestMatchers("/users/list", "/users/list/page/*", "/users/saveUser", "/users/updateUser", "/users/createUser", "/users/editUser", "/users/deleteUser", "/users/changeAccountStatus").hasAnyRole("SUPER_ADMIN", "ADMIN")
                                 .requestMatchers("/users/userInfo/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "CLIENT", "MANAGER", "REPAIRER")
                 )
                 .csrf(CsrfConfigurer::disable)
@@ -57,7 +58,7 @@ public class Security {
                         form -> form
                                 .loginPage("/login")
                                 .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/home")
+                                .defaultSuccessUrl("/about")
                                 .permitAll()
                 ).logout(
                         logout -> logout

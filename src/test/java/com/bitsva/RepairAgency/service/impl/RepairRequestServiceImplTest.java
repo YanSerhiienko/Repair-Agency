@@ -101,10 +101,13 @@ class RepairRequestServiceImplTest {
     @Test
     public void deleteById() {
         long id = 1L;
+        CustomUserDetails userDetails = getUserDetails();
+        RepairRequest request = getRequest();
 
+        when(requestRepository.findById(id)).thenReturn(Optional.of(request));
         doNothing().when(requestRepository).deleteById(id);
 
-        requestService.deleteById(id);
+        requestService.deleteById(id, userDetails);
 
         verify(requestRepository, times(1)).deleteById(id);
     }

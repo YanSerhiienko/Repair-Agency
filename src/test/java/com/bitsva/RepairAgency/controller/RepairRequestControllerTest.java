@@ -58,7 +58,7 @@ class RepairRequestControllerTest {
         when(requestService.findPaginated(1, 5, userDetails.getRole(), userDetails.getId()))
                 .thenReturn(page);
 
-        mvc.perform(get("/RepairAgency/requests")
+        mvc.perform(get("/requests/list")
                         .with(user(userDetails)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -81,7 +81,7 @@ class RepairRequestControllerTest {
         when(requestService.findPaginated(3, 5, userDetails.getRole(), userDetails.getId()))
                 .thenReturn(page);
 
-        mvc.perform(get("/RepairAgency/requests/page/3")
+        mvc.perform(get("/requests/list/page/3")
                         .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("request/request-list"))
@@ -101,11 +101,11 @@ class RepairRequestControllerTest {
 
         doNothing().when(requestService).save(request, userDetails);
 
-        mvc.perform(post("/RepairAgency/saveRequest")
+        mvc.perform(post("/requests/saveRequest")
                         .with(user(userDetails))
                         .flashAttr("request", request))
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(requestService, times(1)).save(request, userDetails);
     }
@@ -114,7 +114,7 @@ class RepairRequestControllerTest {
     @SneakyThrows
     @WithMockCustomUser
     public void createRequest() {
-        mvc.perform(get("/RepairAgency/createRequest"))
+        mvc.perform(get("/requests/createRequest"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("request/request-form"))
                 .andExpect(model().attribute("request", notNullValue()));
@@ -128,7 +128,7 @@ class RepairRequestControllerTest {
 
         when(requestService.getById(id)).thenReturn(getRequest());
 
-        mvc.perform(get("/RepairAgency/editRequest?id=" + id))
+        mvc.perform(get("/requests/editRequest?id=" + id))
                 .andExpect(status().isOk())
                 .andExpect(view().name("request/request-form"))
                 .andExpect(model().attribute("request", notNullValue()));
@@ -141,12 +141,14 @@ class RepairRequestControllerTest {
     @WithMockCustomUser
     public void deleteRequest() {
         long id = 1L;
+        CustomUserDetails userDetails = getUserDetails();
 
-        mvc.perform(post("/RepairAgency/deleteRequest?id=" + id))
+        mvc.perform(post("/requests/deleteRequest?id=" + id)
+                        .with(user(userDetails)))
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
-        verify(requestService, times(1)).deleteById(id);
+        verify(requestService, times(1)).deleteById(id, userDetails);
     }
 
     @Test
@@ -156,12 +158,12 @@ class RepairRequestControllerTest {
         long id = 1L;
         RepairRequestPaymentStatus paymentStatus = RepairRequestPaymentStatus.PAID;
 
-        mvc.perform(post("/RepairAgency/changePaymentStatus?id=" + id)
+        mvc.perform(post("/requests/changePaymentStatus?id=" + id)
                         .param("id", String.valueOf(id))
                         .param("paymentStatus", String.valueOf(paymentStatus))
                 )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(requestService, times(1)).changePaymentStatus(id, paymentStatus);
     }
@@ -173,12 +175,12 @@ class RepairRequestControllerTest {
         long id = 1L;
         RepairRequestCompletionStatus completionStatus = RepairRequestCompletionStatus.COMPLETED;
 
-        mvc.perform(post("/RepairAgency/changeCompletionStatus?id=" + id)
+        mvc.perform(post("/requests/changeCompletionStatus?id=" + id)
                         .param("id", String.valueOf(id))
                         .param("completionStatus", String.valueOf(completionStatus))
                 )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(requestService, times(1)).changeCompletionStatus(id, completionStatus);
     }
@@ -190,12 +192,12 @@ class RepairRequestControllerTest {
         long id = 1L;
         long cost = 0l;
 
-        mvc.perform(post("/RepairAgency/updateCost?id=" + id)
+        mvc.perform(post("/requests/updateCost?id=" + id)
                         .param("id", String.valueOf(id))
                         .param("cost", String.valueOf(cost))
                 )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(requestService, times(1)).updateCost(id, cost);
     }
@@ -207,12 +209,12 @@ class RepairRequestControllerTest {
         long id = 1L;
         String repairer = "repairer";
 
-        mvc.perform(post("/RepairAgency/updateRepairer?id=" + id)
+        mvc.perform(post("/requests/updateRepairer?id=" + id)
                         .param("id", String.valueOf(id))
                         .param("repairer", repairer)
                 )
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(requestService, times(1)).updateRepairer(id, repairer);
     }
@@ -224,10 +226,10 @@ class RepairRequestControllerTest {
         CustomUserDetails userDetails = getUserDetails();
         long id = 1L;
 
-        mvc.perform(post("/RepairAgency/payForRequest?id=" + id)
+        mvc.perform(post("/requests/payForRequest?id=" + id)
                         .with(user(userDetails)))
                 .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/RepairAgency/requests"));
+                .andExpect(view().name("redirect:/requests/list"));
 
         verify(requestService, times(1)).payForRequest(id, userDetails);
     }
